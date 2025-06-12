@@ -6,10 +6,10 @@
 #include <string.h>
 #include <math.h>
 
-#define LINE_SIZE 2000 //taille d'une ligne
+#define LINE_SIZE 2000
 
-FILE * start_section(char * section_name, char * filename);
-void html_file_generator(int section_nbr);
+FILE * start_section(char * filename);
+char * html_file_generator(int section_nbr);
 void end_section(FILE * file);
 
 

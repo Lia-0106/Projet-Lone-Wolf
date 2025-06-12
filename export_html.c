@@ -1,13 +1,14 @@
 #include "export_html.h"
 
 //Lire le fichier section HTML
-FILE * start_section(char * section_name, char * filename){
-    FILE * file = fopen(filename, 'r');
+FILE * start_section(char * filename)
+{
+    FILE * file = fopen(filename, "r");
     if (file == NULL) {
         printf("Unable to open file <%s>\n", filename), exit(EXIT_FAILURE);
     }
     char line[LINE_SIZE];
-    int n=0;
+    int n = 0;
     while (fgets(line, sizeof(line), file)) {
         char * section = strstr(line,"<section>");
         int nbr_section;
@@ -21,7 +22,9 @@ FILE * start_section(char * section_name, char * filename){
 
         char file_html[256];
         strcpy(file_html, html_file_generator(nbr_section));
-        FILE * write_file_html = fopen(file_html, 'w');
+        FILE * write_file_html = fopen(file_html, "a");
+        fprintf(write_file_html, line);
+        fclose(write_file_html);
 
         // fin section
         // for (int i = 0 ; i < LINE_SIZE ; i++) {
@@ -36,16 +39,15 @@ FILE * start_section(char * section_name, char * filename){
     return file;
 }
 
+
 char * html_file_generator(int section_nbr)
 {
-    char name[256];
+    char * name = malloc(sizeof(char) * 256);
     sprintf(name, "sect%d.html", section_nbr);
     printf("nom html : %s", name);
 
-    system("cd export");
-
     char command_line[256];
-    sprintf(command_line, "touch %s", name);
+    sprintf(command_line, "type nul > ./export/%s", name);
     system(command_line);
 
     return name;
@@ -58,3 +60,4 @@ void end_section(FILE * file)
 }
 
 //Traiter un choice
+//Trouver le nom de la section --> ouvrir celle choisie
