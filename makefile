@@ -11,8 +11,10 @@ $(EXE): $(OBJ)
 	$(CC) $(OBJ) -o $(EXE) $(LDFLAGS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
-web: $(EXE) 02fotw.data
-	rm -f ./export/*.html
-	./$(EXE) 02fotw.data
+web:
+	del /Q .\export\*.html
+	./$(EXE) --file ./ressources/02fotw.data
+hsup:
+	del /Q .\export\*.html
 clean:
 	rm -f $(OBJ) $(EXE)
