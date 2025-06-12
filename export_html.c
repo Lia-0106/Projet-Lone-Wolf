@@ -4,8 +4,7 @@ void start_section(char * filename)
 {
     FILE * file = fopen(filename, "r");
     if (file == NULL) {
-        perror("Erreur ouverture fichier !");
-        exit(1);
+        printf("Unable to open file <%s>\n", filename), exit(EXIT_FAILURE);
     }
 
     char line[LINE_SIZE];
