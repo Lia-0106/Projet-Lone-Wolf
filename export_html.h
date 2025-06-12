@@ -1,5 +1,5 @@
-#ifndef FICHIER1_H
-#define FICHIER1_H
+#ifndef EXPORT_HTML_H
+#define EXPORT_HTML_H
 
 #include <stdio.h>
 #include <stdlib.h>

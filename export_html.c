@@ -1,4 +1,4 @@
-#include "fichier1.h"
+#include "export_html.h"
 
 //Lire le fichier section HTML
 FILE * start_section(char * section_name, char * filename){
@@ -6,13 +6,13 @@ FILE * start_section(char * section_name, char * filename){
     if (file == NULL) {
         printf("Unable to open file <%s>\n", filename), exit(EXIT_FAILURE);
     }
-
     char line[LINE_SIZE];
     while (fgets(line, sizeof(line), file)) {
 
-        if (strstr(line,))
+        char * section = strstr(line,"<section>");
+        if (section == NULL)
         {
-            /* code */
+            
         }
         
         if (condition)//fin section
@@ -23,6 +23,7 @@ FILE * start_section(char * section_name, char * filename){
         
     }
     
+    free(section);
     return file;
 }
 
