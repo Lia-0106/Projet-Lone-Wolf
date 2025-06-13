@@ -19,7 +19,7 @@
     }
 
     section {
-      max-width: 60% ;
+      max-width: 70% ;
       margin: 0 auto ;
     }
       
@@ -44,3 +44,7 @@
       padding: 2rem;
       border-radius: 15px;
     }
+
+  .inline, .float {
+    text-align: center;
+  }

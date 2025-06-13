@@ -85,6 +85,9 @@ void link(char * line)
             if (strncasecmp(temp, "turn to", 7) == 0) {
                 if (sscanf(temp + 7, "%d", &nbr) == 1)
                     break;
+            } else if (strncasecmp(temp, "turning to", 10) == 0) {
+                if (sscanf(temp + 10, "%d", &nbr) == 1)
+                    break;
             }
             temp++;
         }
@@ -100,6 +103,7 @@ void link(char * line)
 
 void html_verificator(char * line, int nbr_section)
 {
+    //rajoute un id pour la section
     char chaine[512]; 
     if (strstr(line, "<section") != NULL) {
         strcpy(chaine, "<section id=\"");
@@ -110,10 +114,12 @@ void html_verificator(char * line, int nbr_section)
         return;
     }
     
+    //remplace les balises XML en HTML
     for (int i = 0 ; i < 2 ; i++) {
         replace(line, "illustration", "div");
         replace(line, "instance", "img alt=\"image\"");
 
+        //on met en plus la balise fermante
         if (strstr(line, "<choice") != NULL) {
             replace(line, "choice idref", "p id");
             line[strlen(line) - 1] = '\0';
@@ -126,6 +132,9 @@ void html_verificator(char * line, int nbr_section)
         replace(line, "creator", "p");
         replace(line, "description", "p");
         replace(line, "meta", "div");
+        replace(line, "footref", "href");
+        replace(line, "idref", "id");
+        replace(line, "bookref", "href");
     }
 }
 
@@ -134,11 +143,13 @@ void html_verificator(char * line, int nbr_section)
 void replace(char * line, char * old_word, char * new_word) 
 {
     char buffer[LINE_SIZE];
+    // Pointeur a la fin du mot a remplacer
     char * position = strstr(line, old_word);
 
     if (position == NULL) 
         return;
 
+    // Taille entre la fin du mot a remplacer et la line
     size_t before = position - line;
     size_t old_word_len = strlen(old_word);
 
