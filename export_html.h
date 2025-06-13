@@ -8,17 +8,26 @@
 #define LINE_SIZE 2000
 
 /**
- * @brief lit les sections dans le fichier .data et génére un fichier html
+ * @brief Lit les sections dans le fichier .data et génére un fichier HTML
  *
  * @param filename chemin d'accès vers le fichier .data
 */
 void start_section(char * filename);
 
 /**
- * @brief ajoute la balise body et html en fin de fichier
+ * @brief Ajoute la balise body et html en fin de fichier
  *
- * @param write_file_html pointeur sur un fichier html
+ * @param write_file_html pointeur sur un fichier HTML
 */
 void end_section(FILE * write_file_html);
+
+/**
+ * @brief Cherche le nombre de la section et
+ * modifie la balise <a> en y ajoutant un href pour link
+ * sur les autres fichiers HTML
+ *
+ * @param line pointeur sur ligne
+*/
+void link(char * line);
 
 #endif
