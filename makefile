@@ -1,20 +1,47 @@
+UNAME_S := $(shell uname 2>/dev/null || echo Unknown)
+ifeq ($(OS),Windows_NT)
+    OS_DETECTED := windows
+else ifeq ($(findstring MINGW,$(UNAME_S)),MINGW)
+    OS_DETECTED := windows
+else ifeq ($(UNAME_S),Linux)
+    OS_DETECTED := linux
+else ifeq ($(UNAME_S),Darwin)
+    OS_DETECTED := macos
+else
+    OS_DETECTED := unknown
+endif
+
 CC = gcc
 CFLAGS = -Wall -Wextra -O2
 LDFLAGS = 
 
 SRC = main.c export_html.c
 OBJ = $(SRC:.c=.o)
-EXE = projet.exe
+
+ifeq ($(OS_DETECTED),windows)
+    EXE = projet.exe
+    RM = del /Q
+    RUN = .\\$(EXE)
+    RMHTML = del /Q .\\export\\*.html
+else
+    EXE = projet
+    RM = rm -f
+    RUN = ./$(EXE)
+    RMHTML = rm -f ./export/*.html
+endif
 
 all: $(EXE)
+
 $(EXE): $(OBJ)
 	$(CC) $(OBJ) -o $(EXE) $(LDFLAGS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 web:
-	del /Q .\export\*.html
-	./$(EXE) --file ./ressources/02fotw.data
+	$(RMHTML)
+	$(RUN) --file ./ressources/02fotw.data
 hsup:
-	del /Q .\export\*.html
+	$(RMHTML)
 clean:
-	del /Q $(OBJ) $(EXE)
+	$(RM) $(OBJ) $(EXE)
+
+.PHONY: all web hsup clean
