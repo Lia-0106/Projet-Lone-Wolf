@@ -18,8 +18,9 @@
       background-color: var(--bg-color);
     }
 
-    body {
-      background-color: var(--bg-color);
+    section {
+      max-width: 60% ;
+      margin: 0 auto ;
     }
       
     h1 {
@@ -36,11 +37,6 @@
 
     a {
       color:var(--primary-color) ;
-    }
-
-    section {
-      max-width: 60% ;
-      margin: 0 auto ;
     }
 
     .content {

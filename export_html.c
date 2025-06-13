@@ -108,17 +108,9 @@ void html_verificator(char * line, int nbr_section)
         line[strlen(line) - 1] = '\0';
         sprintf(line, "%s\">sect%d\n", line, nbr_section);
         return;
-    } 
-    // else if (strstr(line, "<choice") != NULL) {
-    //     strcpy(chaine, "<p id");
-    //     strcat(chaine, line + 13);
-    //     strcpy(line, chaine);
-    //     line[strlen(line) - 1] = '\0';
-    //     strcat(line, "</p>\n");
-    //     return;
-    // }
+    }
     
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0 ; i < 2 ; i++) {
         replace(line, "illustration", "div");
         replace(line, "instance", "img alt=\"image\"");
 
@@ -142,19 +134,19 @@ void html_verificator(char * line, int nbr_section)
 void replace(char * line, char * old_word, char * new_word) 
 {
     char buffer[LINE_SIZE];
-    char * pos = strstr(line, old_word);
+    char * position = strstr(line, old_word);
 
-    if (pos == NULL) 
+    if (position == NULL) 
         return;
 
-    size_t before = pos - line;
-    size_t old_word_len = strlen(old_word_len);
+    size_t before = position - line;
+    size_t old_word_len = strlen(old_word);
 
     strncpy(buffer, line, before);
     buffer[before] = '\0';
 
     strcat(buffer, new_word);
-    strcat(buffer, pos + old_word_len);
+    strcat(buffer, position + old_word_len);
 
     strncpy(line, buffer, LINE_SIZE - 1);
     line[LINE_SIZE - 1] = '\0';

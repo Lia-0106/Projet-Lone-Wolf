@@ -30,8 +30,21 @@ void end_section(FILE * write_file_html);
 */
 void link(char * line);
 
+/**
+ * @brief Convertie balises XML → HTML
+ *
+ * @param nbr_section numéro de la section
+ * @param line pointeur sur ligne de lecture
+*/
 void html_verificator(char * line, int nbr_section);
 
+/**
+ * @brief Modifie de mot dans une chaine de caractère
+ *
+ * @param line pointeur sur ligne de lecture
+ * @param old_word chaine de caractère avec le mot a remplacer
+ * @param new_word chaine de caractère avec le mot de remplacement
+*/
 void replace(char * line, char * old_word, char * new_word);
 
 #endif
