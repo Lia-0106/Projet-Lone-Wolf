@@ -32,6 +32,6 @@ void link(char * line);
 
 void html_verificator(char * line, int nbr_section);
 
-void replace_in_line(char *line, const char *old, const char *new);
+void replace(char * line, char * old_word, char * new_word);
 
 #endif

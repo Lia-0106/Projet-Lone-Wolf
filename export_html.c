@@ -33,9 +33,9 @@ void start_section(char * filename)
             //Écriture du header HTML
             fprintf(write_file_html,
                 "<!DOCTYPE html>\n"
-                "<html>\n\t<head>\n"
+                "<html lang=\"en\">\n\t<head>\n"
                 "\t\t<title>sect%d</title>\n"
-                "\t\t<meta charset=\"utf-8\" />\n"
+                "\t\t<meta charset=\"utf-8\"/>\n"
                 "\t\t<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">\n"
                 "\t</head>\n\t<body>\n",
                 nbr_section);
@@ -61,7 +61,7 @@ void start_section(char * filename)
 void end_section(FILE * write_file_html)
 {
     if (write_file_html != NULL) {
-        fprintf(write_file_html, "\t</section>\n\t<script type=\"text/javascript\" src=\"javascript.js\"></script>"
+        fprintf(write_file_html, "\t</section>\n\t<script src=\"javascript.js\"></script>"
                                  "\n\t</body>\n</html>\n");
         write_file_html = NULL;
     }
@@ -100,44 +100,8 @@ void link(char * line)
 
 void html_verificator(char * line, int nbr_section)
 {
-    char chaine[512];
-    if (strstr(line, "<creator>") != NULL || strstr(line, "<description>") != NULL) {
-        char * balise_debut = strstr(line, "<creator>");
-        if (!balise_debut) 
-            balise_debut = strstr(line, "<description>");
-
-        char * start = strchr(balise_debut, '>');
-        if (!start) 
-            return;
-        start++;
-
-        char * end = strstr(start, "</");
-        if (!end) 
-            return;
-            
-        int i = 0;
-        while (start < end && i < sizeof(chaine) - 1) {
-            chaine[i++] = *start++;
-        } 
-        chaine[i] = '\0';
-
-        sprintf(line, "<p>%s</p>\n", chaine);
-        return;
-    } 
-    // else if (strstr(line, "<instance") != NULL) {
-    //     strcpy(chaine, "<img ");
-    //     strcat(chaine, line + 10);
-    //     strcpy(line, chaine);
-    //     return;
-    // } 
-    else if (strstr(line, "<choice") != NULL) {
-        strcpy(chaine, "<p id");
-        strcat(chaine, line + 13);
-        strcpy(line, chaine);
-        line[strlen(line) - 1] = '\0';
-        strcat(line, "</p>\n");
-        return;
-    } else if (strstr(line, "<section") != NULL) {
+    char chaine[512]; 
+    if (strstr(line, "<section") != NULL) {
         strcpy(chaine, "<section id=\"");
         strcat(chaine, line + 9);
         strcpy(line, chaine);
@@ -145,42 +109,53 @@ void html_verificator(char * line, int nbr_section)
         sprintf(line, "%s\">sect%d\n", line, nbr_section);
         return;
     } 
+    // else if (strstr(line, "<choice") != NULL) {
+    //     strcpy(chaine, "<p id");
+    //     strcat(chaine, line + 13);
+    //     strcpy(line, chaine);
+    //     line[strlen(line) - 1] = '\0';
+    //     strcat(line, "</p>\n");
+    //     return;
+    // }
+    
+    for (int i = 0; i < 2; i++) {
+        replace(line, "illustration", "div");
+        replace(line, "instance", "img alt=\"image\"");
 
-    // char * token = strtok(line, " \n");
-    // if (strstr(token, "illustration") != NULL)
-    //     strcpy(token, "<div");
-    //     strcat(token, line + 13);
-    //     strcpy(line,token);
-    replace_in_line(line, "illustration", "div");
-    replace_in_line(line, "instance", "img");
-    replace_in_line(line, "choice idref", "p id");
-    replace_in_line(line, "choice idref", "p id");
+        if (strstr(line, "<choice") != NULL) {
+            replace(line, "choice idref", "p id");
+            line[strlen(line) - 1] = '\0';
+            strcat(line, "</p>\n");
+        }
 
+        replace(line, "footnote", "p");
+        replace(line, "footnotes", "div");
+        replace(line, "creator", "p");
+        replace(line, "creator", "p");
+        replace(line, "description", "p");
+        replace(line, "meta", "div");
+    }
 }
 
+// ------------------------------------------------------------------
 
-void replace_in_line(char *line, const char *old, const char *new) {
+void replace(char * line, char * old_word, char * new_word) 
+{
     char buffer[LINE_SIZE];
-    char *pos = strstr(line, old);
+    char * pos = strstr(line, old_word);
 
-    if (pos == NULL) return;  // Mot non trouvé
+    if (pos == NULL) 
+        return;
 
-    // Calcul des positions
     size_t before = pos - line;
-    size_t old_len = strlen(old);
-    size_t new_len = strlen(new);
+    size_t old_word_len = strlen(old_word);
 
-    // Copie avant le mot à remplacer
     strncpy(buffer, line, before);
     buffer[before] = '\0';
 
-    // Ajout du mot de remplacement
-    strcat(buffer, new);
+    strcat(buffer, new_word);
+    strcat(buffer, pos + old_word_len);
 
-    // Ajout de ce qu'il y a après le mot à remplacer
-    strcat(buffer, pos + old_len);
-
-    // Copie finale dans la ligne d'origine
     strncpy(line, buffer, LINE_SIZE - 1);
     line[LINE_SIZE - 1] = '\0';
 }
