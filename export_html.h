@@ -30,4 +30,8 @@ void end_section(FILE * write_file_html);
 */
 void link(char * line);
 
+void html_verificator(char * line, int nbr_section);
+
+void replace_in_line(char *line, const char *old, const char *new);
+
 #endif
