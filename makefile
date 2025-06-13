@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -O2
 LDFLAGS = 
 
-SRC = main.c export_html.c fichier2.c
+SRC = main.c export_html.c
 OBJ = $(SRC:.c=.o)
 EXE = projet.exe
 
