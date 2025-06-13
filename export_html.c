@@ -103,7 +103,7 @@ void link(char * line)
 
 void html_verificator(char * line, int nbr_section)
 {
-    //rajoute un id pour la section
+    // Rajoute un id pour la section
     char chaine[512]; 
     if (strstr(line, "<section") != NULL) {
         strcpy(chaine, "<section id=\"");
@@ -114,12 +114,12 @@ void html_verificator(char * line, int nbr_section)
         return;
     }
     
-    //remplace les balises XML en HTML
+    // Remplace les balises XML en HTML
     for (int i = 0 ; i < 2 ; i++) {
         replace(line, "illustration", "div");
         replace(line, "instance", "img alt=\"image\"");
 
-        //on met en plus la balise fermante
+        // On met en plus la balise fermante
         if (strstr(line, "<choice") != NULL) {
             replace(line, "choice idref", "p id");
             line[strlen(line) - 1] = '\0';
@@ -143,20 +143,22 @@ void html_verificator(char * line, int nbr_section)
 void replace(char * line, char * old_word, char * new_word) 
 {
     char buffer[LINE_SIZE];
-    // Pointeur a la fin du mot a remplacer
+    // Pointeur a la fin du mot a remplacer (première occurence)
     char * position = strstr(line, old_word);
 
     if (position == NULL) 
         return;
 
-    // Taille entre la fin du mot a remplacer et la line
+    // Calcule la distance entre le début de la ligne et position
     size_t before = position - line;
     size_t old_word_len = strlen(old_word);
 
+    // Ajoute line avant le mot à remplacer dans buffer
     strncpy(buffer, line, before);
     buffer[before] = '\0';
 
     strcat(buffer, new_word);
+    // Ajoute la fin de la ligne originale à la suite de buffer
     strcat(buffer, position + old_word_len);
 
     strncpy(line, buffer, LINE_SIZE - 1);
