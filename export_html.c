@@ -54,9 +54,8 @@ void start_section(char * filename)
                 int nbr;
                 while (*ptr) {
                 if (strncasecmp(ptr, "turn to", 7) == 0) {
-                        if (sscanf(ptr + 7, "%d", &nbr) == 1) {
+                        if (sscanf(ptr + 7, "%d", &nbr) == 1)
                             break;
-                        }
                     }
                     ptr++;
                 }
@@ -65,9 +64,7 @@ void start_section(char * filename)
                 strcat(chaine2, chaine1 + 3);
                 strcpy(balise, chaine2);
                 fprintf(write_file_html, "\t%s", line);
-            }
-            else
-            {
+            } else {
                 fprintf(write_file_html, "\t%s", line);
             }
         }

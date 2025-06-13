@@ -17,4 +17,4 @@ web:
 hsup:
 	del /Q .\export\*.html
 clean:
-	rm -f $(OBJ) $(EXE)
+	del /Q $(OBJ) $(EXE)
