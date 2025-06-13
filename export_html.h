@@ -26,7 +26,7 @@ void end_section(FILE * write_file_html);
  * modifie la balise <a> en y ajoutant un href pour link
  * sur les autres fichiers HTML
  *
- * @param line pointeur sur ligne
+ * @param line pointeur sur ligne de lecture
 */
 void link(char * line);
 

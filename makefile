@@ -22,12 +22,10 @@ ifeq ($(OS_DETECTED),windows)
     EXE = projet.exe
     RM = del /Q
     RUN = ./$(EXE)
-    RMHTML = del /Q export/*.html
 else
     EXE = projet
     RM = rm -f
     RUN = ./$(EXE)
-    RMHTML = rm -f ./export/*.html
 endif
 
 all: $(EXE)
@@ -37,10 +35,10 @@ $(EXE): $(OBJ)
 %.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 web:
-	$(RMHTML)
+	$(RM) .\export\*.html
 	$(RUN) --file ./ressources/02fotw.data
 hsup:
-	$(RMHTML)
+	$(RM) .\export\*.html
 clean:
 	$(RM) $(OBJ) $(EXE)
 
