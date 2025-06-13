@@ -148,7 +148,7 @@ void replace(char * line, char * old_word, char * new_word)
         return;
 
     size_t before = pos - line;
-    size_t old_word_len = strlen(old_word);
+    size_t old_word_len = strlen(old_word_len);
 
     strncpy(buffer, line, before);
     buffer[before] = '\0';
