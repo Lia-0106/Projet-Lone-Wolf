@@ -12,8 +12,8 @@ else
 endif
 
 CC = gcc
-CFLAGS = -Wall -Wextra -O2
-LDFLAGS = 
+CFLAGS = -Wall
+LDFLAGS = -lm
 
 SRC = main.c export_html.c
 OBJ = $(SRC:.c=.o)
