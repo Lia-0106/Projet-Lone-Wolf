@@ -28,6 +28,9 @@ int main(int argc, char *argv[])
     printf("nom : %s\n"
            "habilité : %d\n"
            "endurance : %d\n", p1->name, p1->hability, p1->endurance);
+    for (int i = 0 ; i < 10 ; i++) {
+        printf("{%d} ", (int)p1->tab_discipline[i]);
+    }
     // start_section(filename);
     
     free(p1);

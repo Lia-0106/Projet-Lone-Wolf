@@ -24,16 +24,32 @@ typedef enum {
     mind_over_matter
 } Disciplines;
 
+typedef enum {
+    dagger,
+    spear,
+    mace,
+    short_sword,
+    warhammer,
+    sword,
+    axe,
+    quarterstaff,
+    broadsword,
+    bow
+} Weapons;
+
 typedef struct {
     char name[32];
     int endurance;
     int hability;
     Bool tab_discipline[10];
     int nbr_discipline;
+    Bool tab_weapon[10];
+    int weaponskill_weapon;
 } Player;
 
 int generate_rnt();
 Player * player_generator(char name[256]);
-void calcule_point(int rc, int nbr_rand, int* hero,int* enemi);
+void discipline_choice(Player * p1);
+void calcule_point(int rc, int nbr_rand, int * hero, int * enemi);
 
 #endif

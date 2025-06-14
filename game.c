@@ -8,13 +8,55 @@ Player * player_generator(char name[256])
     strcpy(p1->name, name);
     p1->hability = generate_rnt() + 10; // 10-19
     p1->endurance = generate_rnt() + 20; // 20-29
+    p1->nbr_discipline = 0;
+    memset(p1->tab_discipline, 0, sizeof(p1->tab_discipline));
+    discipline_choice(p1);
     return p1;
 }
 
-Bool discipline_choice()
+void discipline_choice(Player * p1)
 {
-    Bool tab_discipline[10];
+    Disciplines choice;
+    char *weapon_names[10] = {"Dagger", "Spear", 
+                              "Mace", "Short Sword", 
+                              "Warhammer", "Sword", 
+                              "Axe", "Quarterstaff",
+                              "Broadsword", "Bow"};
+
+    while (p1->nbr_discipline != 6) {
+        printf("-------------------CHOICE--------------------\n"
+           "Choisi 6 Disciplines parmi les 10 suivantes :\n\n"
+           "1- Camouflage\n"
+           "2- Hunting\n"
+           "3- Sixth Sense\n"
+           "4- Tracking\n"
+           "5- Weaponskill\n"
+           "6- Healing\n"
+           "7- Mindshield\n"
+           "8- Mindblast\n"
+           "9- Animal Kinship\n"
+           "10- Mind Over Matter\n"
+           "\nNombre Discipline(s) Possédé : %d\n"
+        "---------------------------------------------\n"
+        "--> ", p1->nbr_discipline);
+        scanf("%d", (int *)&choice), choice--;
+        getchar();
+        system("cls");
+        if (choice >= 0 && choice < 10 && p1->tab_discipline[choice] == false) {
+            p1->tab_discipline[choice] = true;
+            p1->nbr_discipline++;
+            if (choice == weaponskill) {
+                p1->weaponskill_weapon = generate_rnt();
+                printf("[Le Bonus s'appliquera a l'arme : %s]\n\n", weapon_names[p1->weaponskill_weapon]);
+            }
+        } else {
+            printf("----------------------------------------\n"
+                   "| Choix invalide ou déjà selectionné ! |\n"
+                   "----------------------------------------\n\n");
+        }
+    }
 }
+
 // RC = ton HC – HC de l’ennemi (limites le RC entre –11 et +11 s’il dépasse)
 // La table de combat
 // Boucle jusqu’à ce que l’un des deux meure
