@@ -62,7 +62,7 @@ typedef struct {
     int nbr_weapon;
     int weaponskill_weapon;
     struct Resources bag;
-    Bool in_combat;
+    Bool combat;
 } Player;
 
 typedef struct Resources {

@@ -117,6 +117,7 @@ void eating(Player * p1)
 {
     if (p1->tab_discipline[hunting] == true) {
         printf("Pas besoin de manger");
+        return;
     } else if (p1->bag.meals > 0) {
         p1->bag.meals--;
     } else {
@@ -126,7 +127,7 @@ void eating(Player * p1)
 
 void healing(Player * p1)
 {
-    if (p1->in_combat == false) {
+    if (p1->combat == false) {
         if (p1->bag.potions_healing > 0) {
             if (p1->endurance == p1->endurance_max) {
                 printf("[Endurance déjà au Max !]\n\n");
