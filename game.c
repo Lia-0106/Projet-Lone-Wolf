@@ -84,7 +84,7 @@ void discipline_choice(Player * p1)
            "\nNombre Discipline(s) Possédé : %d\n"
         "---------------------------------------------\n"
         "--> ", p1->nbr_discipline);
-        scanf("%d", (int *)&choice), choice--;
+        scanf("%d", (int *)&choice), choice--;// ?
         getchar();
         system("cls");
         if (choice >= 0 && choice < 10 && p1->tab_discipline[choice] == false) {
@@ -179,4 +179,27 @@ void calcule_point(int rc, int nbr_rand, int * hero, int * enemi)
     *hero = 0;
     *enemi = 0;
     fclose(file);
+}
+
+int calcule_rc(int hab_hero, int hab_enemi){
+    int rc = hab_hero-hab_enemi;
+    if (rc< -11){
+        rc = -11;
+    }
+    if (rc>11){
+        rc = 11;
+    }
+    return rc;
+}
+
+void combat(Player * p1,Player * p2){
+    int rc, nbr, j1, j2;// j1 → degat subit pour p1 
+    srand(time(NULL));
+    rc = calcule_rc(p1->combat_skill, p2->combat_skill) //les Habilités
+    while (p1->endurance > 0 && p2->endurance > 0){
+        nbr = rand() % 10;
+        calcule_point(rc, nbr, j1, j2);
+        p1->endurance -= j1;
+        p2->endurance -= j2;
+    }
 }

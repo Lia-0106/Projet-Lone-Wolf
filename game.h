@@ -83,5 +83,7 @@ void eating(Player * p1);
 void healing(Player * p1);
 
 void calcule_point(int rc, int nbr_rand, int * hero, int * enemi);
+int calcule_rc(int hab_hero, int hab_enemi);
+void combat(Player * p1,Player * p2);
 
 #endif
