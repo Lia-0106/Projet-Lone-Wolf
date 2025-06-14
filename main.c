@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
            "habilité : %d\n"
            "endurance : %d\n", p1->name, p1->hability, p1->endurance);
     // start_section(filename);
-
+    
+    free(p1);
     return EXIT_SUCCESS ;
 }
