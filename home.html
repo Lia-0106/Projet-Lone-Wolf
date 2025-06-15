@@ -44,67 +44,34 @@
             background-color: #0056b3;
         }
     </style>
-    <script src="game.js"></script>
 </head>
 <body>
-    <h1>Test de Sélection des Disciplines</h1>
-    <div id="game-output"></div>
-    <div id="discipline-choices">
-        <p>Choisissez une discipline (6 au total) :</p>
-        <a href="#" onclick="chooseDiscipline(1)">1- Camouflage</a>
-        <a href="#" onclick="chooseDiscipline(2)">2- Hunting</a>
-        <a href="#" onclick="chooseDiscipline(3)">3- Sixth Sense</a>
-        <a href="#" onclick="chooseDiscipline(4)">4- Tracking</a>
-        <a href="#" onclick="chooseDiscipline(5)">5- Weaponskill</a>
-        <a href="#" onclick="chooseDiscipline(6)">6- Healing</a>
-        <a href="#" onclick="chooseDiscipline(7)">7- Mindshield</a>
-        <a href="#" onclick="chooseDiscipline(8)">8- Mindblast</a>
-        <a href="#" onclick="chooseDiscipline(9)">9- Animal Kinship</a>
-        <a href="#" onclick="chooseDiscipline(10)">10- Mind Over Matter</a>
-    </div>
-    <button id="next-step" style="display: none;" onclick="nextStep()">Passer à l’étape suivante</button>
+  <h1>Création de personnage</h1>
 
-    <script>
-        let playerPtr = null;
+  <div id="game-output"></div>
 
-        // Afficher les messages dans le DOM
-        function updateDisplay(message) {
-            const output = document.getElementById('game-output');
-            output.innerText += message + '\n';
-            output.scrollTop = output.scrollHeight; // Auto-scroll
-        }
+  <!-- Étape 1 : nom du joueur -->
+  <div id="step-name">
+    <label for="playerName">Nom du personnage :</label>
+    <input type="text" id="playerName" placeholder="Entrez votre nom" />
+    <button onclick="createPlayer()">OK</button>
+  </div>
 
-        // Désactiver les choix quand terminé
-        function onDisciplinesComplete() {
-            const choices = document.getElementById('discipline-choices');
-            choices.querySelectorAll('a').forEach(link => {
-                link.classList.add('disabled');
-            });
-            document.getElementById('next-step').style.display = 'block';
-        }
+  <!-- Étape 2 : choix de l’arme -->
+  <div id="step-weapon" style="display: none;">
+    <p>Choisissez une arme :</p>
+    <div id="weapon-choices"></div>
+  </div>
 
-        // Simuler l’étape suivante
-        function nextStep() {
-            updateDisplay('Vous passez à l’étape suivante de l’aventure !');
-            document.getElementById('next-step').style.display = 'none';
-        }
+  <!-- Étape 3 : choix des disciplines -->
+  <div id="step-disciplines" style="display: none;">
+    <p>Choisissez 6 disciplines :</p>
+    <div id="discipline-choices"></div>
+  </div>
 
-        // Gérer le choix de discipline
-        function chooseDiscipline(choice) {
-            if (playerPtr) {
-                Module._discipline_choice(playerPtr, choice);
-            } else {
-                updateDisplay('Erreur : Joueur non initialisé.');
-            }
-        }
+  <button id="next-step" style="display: none;" onclick="nextStep()">Passer à l’étape suivante</button>
 
-        // Initialiser le jeu
-        Module.onRuntimeInitialized = () => {
-            // Créer le joueur
-            playerPtr = Module._player_generator('Lone Wolf');
-            updateDisplay('Joueur créé : Lone Wolf');
-            updateDisplay('Choisissez vos disciplines ci-dessous.');
-        };
-    </script>
+  <script src="game.js"></script>
+  <script src="./export/home.js"></script>
 </body>
 </html>
