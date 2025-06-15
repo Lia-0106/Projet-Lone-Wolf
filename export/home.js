@@ -131,8 +131,6 @@ function renderDisciplineChoices()
 function nextStep()
 {
     updateDisplay("L'aventure commence !");
-    // Rediriger vers la 1ère section, ou autre action
-    // window.location.href = "sect1.html"; // Ex. si généré
     window.location.href = "export/sect1.html";
 }
 

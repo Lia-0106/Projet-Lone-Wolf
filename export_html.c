@@ -61,8 +61,9 @@ void start_section(char * filename)
 void end_section(FILE * write_file_html)
 {
     if (write_file_html != NULL) {
-        fprintf(write_file_html, "\t</section>\n\t<script src=\"javascript.js\"></script>"
-                                 "\n\t</body>\n</html>\n");
+        fprintf(write_file_html, "\t</section>\n\t<script src=\"javascript.js\"></script>\n"
+                                 "\t<script src=\"../game.js\"></script>\n"
+                                 "\t</body>\n</html>\n");
         write_file_html = NULL;
     }
 }
