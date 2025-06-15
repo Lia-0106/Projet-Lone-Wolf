@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 
     if (argc > 5) {
         printf("Trop d'arguments !");
-        exit(EXIT_FAILURE);
+        exit(1);
     }
     
     int found = 0;
@@ -38,5 +38,5 @@ int main(int argc, char *argv[])
     // start_section(filename);
     
     free(p1);
-    return EXIT_SUCCESS ;
+    return 0;
 }

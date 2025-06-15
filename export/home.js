@@ -33,10 +33,10 @@ function createPlayer()
     Module._free(namePtr);
 
     updateDisplay(`Joueur créé : ${name}`);
-    updateDisplay("Choisissez votre arme ci-dessous.");
-    showStep("step-weapon");
+    // updateDisplay("Choisissez votre arme ci-dessous.");
+    // showStep("step-weapon");
 
-    renderWeaponChoices();
+    // renderWeaponChoices();
 }
 
 function renderWeaponChoices()
@@ -54,7 +54,7 @@ function renderWeaponChoices()
         link.innerText = `${i + 1} - ${weapon}`;
         link.onclick = () => {
         Module._weapon_choice(playerPtr, i);
-        updateDisplay(`Arme choisie : ${weapon}`);
+        // updateDisplay(`Arme choisie : ${weapon}`);
         showStep("step-disciplines");
         renderDisciplineChoices();
         };
@@ -98,4 +98,5 @@ function nextStep()
     updateDisplay("L'aventure commence !");
     // Rediriger vers la 1ère section, ou autre action
     // window.location.href = "sect1.html"; // Ex. si généré
+    // Module._main();
 }

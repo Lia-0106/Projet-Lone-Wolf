@@ -1,24 +1,38 @@
 #include "game.h"
 #include <emscripten.h>
 
+// ------------------------------------------------------------------
+
+void update_display(char msg[128])
+{
+    char script[256];
+    sprintf(script, "updateDisplay('%s')", msg);
+    emscripten_run_script(script);
+}
+
+// ------------------------------------------------------------------
+
+void init_random() { srand(time(NULL)); }
 int generate_rnt() { return rand() % 10; }
+
+// ------------------------------------------------------------------
 
 Player * player_generator(char name[256]) 
 {
     Player * p1 = malloc(sizeof(Player));
     strcpy(p1->name, name);
     
-    p1->combat_skill = generate_rnt() + 10; // 10-19
-    p1->endurance = generate_rnt() + 20; // 20-29
+    p1->combat_skill = generate_rnt() + 10;
+    p1->endurance = generate_rnt() + 20;
     p1->endurance_max = p1->endurance;
     
+    print_player_attribut(p1);
+
     p1->nbr_weapon = 0;
     memset(p1->tab_weapon, 0, sizeof(p1->tab_weapon));
-    // weapon_choice(p1);
     
     p1->nbr_discipline = 0;
     memset(p1->tab_discipline, 0, sizeof(p1->tab_discipline));
-    // discipline_choice(p1);
 
     memset(&p1->bag, 0, sizeof(p1->bag));
     p1->bag.gold = generate_rnt() + 10;
@@ -26,12 +40,26 @@ Player * player_generator(char name[256])
     return p1;
 }
 
+// ------------------------------------------------------------------
+
+void print_player_attribut(Player * p1)
+{
+    char combat_skill_print[128];
+    sprintf(combat_skill_print, "Combat Skill : %d", p1->combat_skill);
+    update_display(combat_skill_print);
+
+    char endurance_skill_print[128];
+    sprintf(endurance_skill_print, "Endurance : %d -> Endurance Max : %d", p1->endurance, p1->endurance_max);
+    update_display(endurance_skill_print);
+}
+
+// ------------------------------------------------------------------
+
 void weapon_choice(Player * p1, int choice) 
 {
     char * weapon_names[10] = {"Dagger", "Spear", "Mace", "Short Sword", 
                               "Warhammer", "Sword", "Axe", "Quarterstaff",
                               "Broadsword", "Bow"};
-    choice--;
     if (choice >= 0 && choice < 10 && p1->tab_weapon[choice] == false) {
         p1->tab_weapon[choice] = true;
         p1->nbr_weapon++;
@@ -46,6 +74,8 @@ void weapon_choice(Player * p1, int choice)
         emscripten_run_script("updateDisplay('Choix invalide ou déjà possédé !')");
     }
 }
+
+// ------------------------------------------------------------------
 
 void discipline_choice(Player * p1, int choice)
 {
@@ -89,6 +119,8 @@ void discipline_choice(Player * p1, int choice)
     }
 }
 
+// ------------------------------------------------------------------
+
 void gain_gold(Player * p1, int amount)
 {
     p1->bag.gold += amount;
@@ -97,6 +129,8 @@ void gain_gold(Player * p1, int amount)
         emscripten_run_script("updateDisplay('[Votre Gold est au Max !]')");
     }
 }
+
+// ------------------------------------------------------------------
 
 void eat(Player * p1)
 {
@@ -109,6 +143,8 @@ void eat(Player * p1)
         p1->endurance -= 3;
     }
 }
+
+// ------------------------------------------------------------------
 
 void heal(Player * p1)
 {
@@ -133,6 +169,8 @@ void heal(Player * p1)
         return;
     }
 }
+
+// ------------------------------------------------------------------
 
 void calcule_point(int rc, int nbr_rand, int * hero, int * enemi)
 {
@@ -161,6 +199,8 @@ void calcule_point(int rc, int nbr_rand, int * hero, int * enemi)
     fclose(file);
 }
 
+// ------------------------------------------------------------------
+
 int calcule_rc(int hab_hero, int hab_enemi)
 {
     int rc = hab_hero - hab_enemi;
@@ -170,6 +210,8 @@ int calcule_rc(int hab_hero, int hab_enemi)
         rc = 11;
         return rc;
 }
+
+// ------------------------------------------------------------------
 
 void combat(Player * p1, Player * p2)
 {
