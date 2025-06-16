@@ -17,9 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
   let footer = moveFooter(section);
 
   let otherChildren = Array.from(section.childNodes);
-  otherChildren.forEach(node => {
-  content.appendChild(node);
-});
+    otherChildren.forEach(node => {
+    content.appendChild(node);
+  });
 
   section.innerHTML = "";
 
@@ -42,28 +42,45 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   removeEmptyParagraphs();
-  checkForMealChoice();
   printPictures();
+
+  let signpost = document.querySelector("span.signpost");
+  if (signpost) {
+    let div = document.createElement("div");
+    div.className = "signpost-box";
+
+    signpost.parentNode.insertBefore(div, signpost);
+    div.appendChild(signpost);
+  }
+
+  let randomLink = document.getElementById("random");
+  if (randomLink) {
+    randomLink.style.cursor = "pointer";
+    randomLink.addEventListener("click", (e) => {
+      e.preventDefault();
+      randomNumberTable();
+    });
+  }
 });
 
 
 function createHeader() {
-  let header = document.createElement("header");
+    let header = document.createElement("header");
 
-  let headerDiv = document.createElement("div");
+    let headerDiv = document.createElement("div");
 
-  let title = document.createElement("p");
-  title.textContent = "Fire on the Water";
+    let title = document.createElement("p");
+    title.textContent = "Fire on the Water";
 
-  let authors = document.createElement("p");
-  authors.textContent = "Joe Dever and Gary Chalk";
+    let authors = document.createElement("p");
+    authors.textContent = "Joe Dever and Gary Chalk";
 
-  headerDiv.appendChild(title);
-  headerDiv.appendChild(authors);
+    headerDiv.appendChild(title);
+    headerDiv.appendChild(authors);
 
-  header.appendChild(headerDiv);
+    header.appendChild(headerDiv);
 
-  return header;
+    return header;
 }
 
 
@@ -114,3 +131,29 @@ function printPictures()
 		}
 	}) ;
 } 
+
+function randomNumberTable() {
+  let bubble = document.createElement("div");
+  bubble.id = "random-bubble";
+
+  let button = document.createElement("button");
+  button.textContent = "Generate a number";
+
+  let result = document.createElement("div");
+  result.id = "random-result";
+
+  let close = document.createElement("span");
+  close.textContent = "✖";
+  close.addEventListener("click", () => bubble.remove());
+
+  button.addEventListener("click", () => {
+    let number = Math.floor(Math.random() * 10);
+    result.textContent = "Number : " + number;
+  });
+
+  bubble.appendChild(close);
+  bubble.appendChild(button);
+  bubble.appendChild(result);
+
+  document.body.appendChild(bubble);
+}

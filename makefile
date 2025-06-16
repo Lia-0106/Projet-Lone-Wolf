@@ -17,7 +17,7 @@ LDFLAGS = -lm
 
 SRC = main.c export_html.c
 OBJ = $(SRC:.c=.o)
-GAME = game.data game.js game.wasm
+# GAME = game.data game.js game.wasm
 
 ifeq ($(OS_DETECTED),windows)
     EXE = projet.exe
@@ -41,6 +41,6 @@ web:
 hsup:
 	$(RM) .\export\*.html
 clean:
-	$(RM) $(OBJ) $(EXE) $(GAME) .\export\*.html
+	$(RM) $(OBJ) $(EXE) .\export\*.html
 
 .PHONY: all web hsup clean

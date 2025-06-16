@@ -75,23 +75,23 @@ typedef struct {
 
 // --------------------------------------------------
 
-void update_display(char msg[128]);
+// void update_display(char msg[128]);
 
 // --------------------------------------------------
 
-void init_random();
+// void init_random();
 int generate_rnt();
 
 // --------------------------------------------------
 
 Player * player_generator(char name[256]);
-void weapon_choice(Player * p1, int choice);
-void discipline_choice(Player * p1, int choice);
-void print_player_attribut(Player * p1);
+void weapon_choice(Player * p1);
+void discipline_choice(Player * p1);
+// void print_player_attribut(Player * p1);
 
 // --------------------------------------------------
 
-void eat(Player * p1, Bool choice);
+void eat(Player * p1);
 void heal(Player * p1);
 
 // --------------------------------------------------
