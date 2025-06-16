@@ -102,3 +102,13 @@ class Fight {
 
     
 }
+
+importAddons();
+
+function importAddons() {
+    if (typeof Addons === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'addons.js';
+        document.head.appendChild(script);
+    }
+}
