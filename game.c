@@ -10,23 +10,6 @@ void update_display(char msg[128])
     emscripten_run_script(script);
 }
 
-void escape_js_string(const char * src, char * dest, int max_len)
-{
-    int j = 0;
-    for (int i = 0; src[i] && j < max_len - 2; i++) {
-        if (src[i] == '\'') {
-            dest[j++] = '\\';
-            dest[j++] = '\'';
-        } else if (src[i] == '\n') {
-            dest[j++] = '\\';
-            dest[j++] = 'n';
-        } else {
-            dest[j++] = src[i];
-        }
-    }
-    dest[j] = '\0';
-}
-
 // ------------------------------------------------------------------
 
 void init_random() { srand(time(NULL)); }

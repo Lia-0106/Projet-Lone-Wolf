@@ -65,7 +65,6 @@ function renderWeaponChoices()
         link.innerText = `${i + 1} - ${weapon}`;
         link.onclick = () => {
         Module._weapon_choice(playerPtr, i);
-        // updateDisplay(`Arme choisie : ${weapon}`);
         showStep("step-disciplines");
         renderDisciplineChoices();
         };
@@ -117,3 +116,4 @@ function nextStep()
 }
 
 // ------------------------------------------------------------------
+
