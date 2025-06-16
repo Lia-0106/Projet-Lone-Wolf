@@ -39,7 +39,7 @@ a {
   color:var(--primary-color) ;
 }
 
-.content {
+.container {
   background-color: var(--secondary-color);
   padding: 2rem;
   border-radius: 15px;

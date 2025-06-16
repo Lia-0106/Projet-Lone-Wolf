@@ -22,29 +22,6 @@ function showStep(stepId)
 
 // ------------------------------------------------------------------
 
-// function saveAllHTMLFiles() {
-//     const files = FS.readdir('/export');
-
-//     for (const name of files) {
-//         if (name.endsWith('.html')) {
-//             try {
-//                 const content = FS.readFile(`/export/${name}`, { encoding: 'utf8' });
-//                 const blob = new Blob([content], { type: 'text/html' });
-//                 const link = document.createElement('a');
-//                 link.href = URL.createObjectURL(blob);
-//                 link.download = name;
-//                 document.body.appendChild(link); // Nécessaire sur Firefox
-//                 link.click();
-//                 document.body.removeChild(link);
-//             } catch (e) {
-//                 console.error("Erreur lors de la lecture de", name, e);
-//             }
-//         }
-//     }
-// }
-
-// ------------------------------------------------------------------
-
 function createPlayer()
 {
     const input = document.getElementById("playerName");
@@ -114,19 +91,25 @@ function renderDisciplineChoices()
         link.onclick = () => {
         if (disciplinesChosen >= MAX_DISCIPLINES) return;
 
-        Module._discipline_choice(playerPtr, i);
-        updateDisplay(`Discipline choisie : ${discipline}`);
-        link.classList.add("disabled");
-        link.onclick = null;
+            Module._discipline_choice(playerPtr, i);
+            updateDisplay(`Discipline choisie : ${discipline}`);
+            link.classList.add("disabled");
+            link.onclick = null;
 
-        disciplinesChosen++;
-        if (disciplinesChosen === MAX_DISCIPLINES) {
-            updateDisplay("Choix terminé. Prêt à débuter l’aventure !");
-            document.getElementById("next-step").style.display = "inline-block";
-        }
+            disciplinesChosen++;
+            // if (disciplinesChosen === MAX_DISCIPLINES) {
+            //     updateDisplay("Choix terminé. Prêt à débuter l’aventure !");
+            //     document.getElementById("next-step").style.display = "inline-block";
+            // }
         };
         container.appendChild(link);
     });
+}
+
+function onDisciplinesComplete()
+{
+    updateDisplay("Choix terminé. Prêt à débuter l’aventure !");
+    document.getElementById("next-step").style.display = "inline-block";
 }
 
 // ------------------------------------------------------------------

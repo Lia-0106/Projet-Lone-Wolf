@@ -76,6 +76,7 @@ typedef struct {
 // --------------------------------------------------
 
 void update_display(char msg[128]);
+void escape_js_string(const char * src, char * dest, int max_len);
 
 // --------------------------------------------------
 

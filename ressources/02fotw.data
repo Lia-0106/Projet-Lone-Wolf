@@ -360,7 +360,7 @@
 <section>sect45
 <p>You are galloping along the forest road towards the cloaked riders when you see one of them raise a black staff high above his head. A knot of twisted black steel crowns the tip and it is starting to flow with a vivid blue flame. You are just ready to strike when a searing bolt of energy hurtles from the evil staff and explodes beside you. Thrown sideways by the force of the blast, you tumble into the undergrowth.</p>
 <p>Pick a number from the <a idref="random">Random Number Table</a>.</p>
-<choice idref="sect311">If the number you have picked is 0&endash;7, <a>turn to 311</a>.
+<choice idref="sect311">If the number you have picked is 0&ndash;7, <a>turn to 311</a>.
 <choice idref="sect159">If it is 8&ndash;9, <a>turn to 159</a>.
 
 <section>sect46

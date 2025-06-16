@@ -10,6 +10,23 @@ void update_display(char msg[128])
     emscripten_run_script(script);
 }
 
+void escape_js_string(const char * src, char * dest, int max_len)
+{
+    int j = 0;
+    for (int i = 0; src[i] && j < max_len - 2; i++) {
+        if (src[i] == '\'') {
+            dest[j++] = '\\';
+            dest[j++] = '\'';
+        } else if (src[i] == '\n') {
+            dest[j++] = '\\';
+            dest[j++] = 'n';
+        } else {
+            dest[j++] = src[i];
+        }
+    }
+    dest[j] = '\0';
+}
+
 // ------------------------------------------------------------------
 
 void init_random() { srand(time(NULL)); }
@@ -83,7 +100,7 @@ void discipline_choice(Player * p1, int choice)
                               "Warhammer", "Sword", "Axe", "Quarterstaff",
                               "Broadsword", "Bow"};
     
-    choice--;
+    // choice--;
     if (p1->nbr_discipline >= 6) {
         emscripten_run_script("updateDisplay('Vous avez déjà choisi 6 disciplines.')");
         return;
@@ -95,19 +112,19 @@ void discipline_choice(Player * p1, int choice)
         char msg[256];
         sprintf(msg, "Discipline %d ajoutée. Total : %d/6", choice + 1, p1->nbr_discipline);
 
-        char script[256];
-        sprintf(script, "updateDisplay('%s')", msg);
-        emscripten_run_script_string(script);
+        
+        // char escaped[512];
+        // escape_js_string(msg, escaped, sizeof(escaped));
+        update_display(msg);
 
         
         if (choice == weaponskill) {
+            char msg2[256];
             p1->weaponskill_weapon = generate_rnt();
-            sprintf(msg, "[Le Bonus s'appliquera à l'arme : %s]", weapon_names[p1->weaponskill_weapon]);
-            char script2[256];
-            sprintf(script2, "updateDisplay('%s')", msg);
-            emscripten_run_script_string(script2);
+            sprintf(msg2, "[Le Bonus s appliquera à l arme : %s]", weapon_names[p1->weaponskill_weapon]);
+            update_display(msg2);
             if (p1->tab_weapon[p1->weaponskill_weapon]) {
-                emscripten_run_script("updateDisplay('[Arme Possédée, +2 en habilité en combat si équipé]')");
+                emscripten_run_script("updateDisplay('[Arme Possédée, +2 en habilité en combat si équipe]')");
             }
         }
         
@@ -126,7 +143,8 @@ void gain_gold(Player * p1, int amount)
     p1->bag.gold += amount;
     if (p1->bag.gold > GOLD_MAX) { 
         p1->bag.gold = GOLD_MAX;
-        emscripten_run_script("updateDisplay('[Votre Gold est au Max !]')");
+        printf("[Votre Gold est au Max !]");
+        // emscripten_run_script("updateDisplay('[Votre Gold est au Max !]')");
     }
 }
 
@@ -230,3 +248,4 @@ void combat(Player * p1, Player * p2)
         p2->endurance -= j2;
     }
 }
+

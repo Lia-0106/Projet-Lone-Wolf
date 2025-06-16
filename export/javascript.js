@@ -1,32 +1,70 @@
 let playerPtr = Number(sessionStorage.getItem('playerPtr')) || null;
 
 document.addEventListener("DOMContentLoaded", () => {
-	let section = document.querySelector("section");
+  let section = document.querySelector("section");
 
-	//On récupère le numéro de la section
-	let textNode = section.firstChild;
-	let number = textNode.textContent.match(/\d+/)[0];
+  let textNode = section.firstChild;
+  let number = textNode.textContent.match(/\d+/)[0];
 
-	let h1 = document.createElement("h1");
-	h1.textContent = number;
-	section.removeChild(textNode);
-	
-	let div = document.createElement("div");
-	div.className = "content";
-	div.appendChild(h1);
+  let header = document.createElement("header");
+  header.appendChild(document.createElement("div"));
 
-	// On met tous les enfants dans la div
-	while (section.firstChild) {
-		div.appendChild(section.firstChild);
-	}
+  let content = document.createElement("div");
+  content.className = "content";
 
-	section.appendChild(div);
+  let h1 = document.createElement("h1");
+  h1.textContent = number;
 
-	printPictures();
-	checkForMealChoice();
+  section.removeChild(textNode);
+
+  let footer = moveFooter(section);
+
+  let otherChildren = Array.from(section.childNodes);
+  otherChildren.forEach(node => {
+  content.appendChild(node);
 });
 
-// Fonction qui affiche les images dans le format png uniquement
+  section.innerHTML = "";
+
+  let container = document.createElement("div");
+  container.className = "container";
+
+  container.appendChild(header);
+  content.insertBefore(h1, content.firstChild);
+  container.appendChild(content);
+  container.appendChild(footer);
+
+  section.appendChild(container);
+
+  removeEmptyParagraphs();
+  checkForMealChoice();
+  printPictures();
+});
+
+
+function moveFooter(section) {
+  let footer = document.createElement("footer") ;
+
+  let footElements = section.querySelectorAll('[id*="-foot"]') ;
+
+  footElements.forEach(el => {
+    let parentDiv = el.closest('div') ;
+    if (parentDiv) {
+      footer.appendChild(parentDiv) ;
+    }
+  }) ;
+
+  return footer ;
+}
+
+function removeEmptyParagraphs() {
+  document.querySelectorAll('p').forEach(p => {
+    if (!p.textContent.trim()) {
+      p.remove();
+    }
+  });
+}
+
 function printPictures()
 {
 	let baseURL = "https://www.projectaon.org/en/xhtml/lw/02fotw/" ;
@@ -53,7 +91,6 @@ function checkForMealChoice()
     let hasMealChoice = false;
     let mealParagraph = null;
 
-    // 1. Trouver le paragraphe contenant les mots-clés
     paragraphs.forEach(p => {
         const text = p.textContent.toLowerCase();
         if (text.includes('eat') && text.includes('meal') && text.includes('endurance')) {
@@ -71,32 +108,25 @@ function checkForMealChoice()
             <p id="meal-message" style="color: red;"></p>
         `;
 
-        // 2. Insertion universelle
         const parent = mealParagraph.parentElement;
-        
-        // Trouver le prochain élément contenant un lien narratif
+
         let nextSibling = mealParagraph.nextElementSibling;
         while (nextSibling && !nextSibling.querySelector('a[href*="sect"]')) {
             nextSibling = nextSibling.nextElementSibling;
         }
 
-        // Insérer avant le premier lien narratif trouvé
         if (nextSibling) {
             parent.insertBefore(mealInterface, nextSibling);
-        } 
-        // Sinon insérer après le paragraphe détecté
-        else {
+        } else {
             parent.appendChild(mealInterface);
         }
 
-        // 3. Désactiver tous les liens narratifs
         const narrativeLinks = document.querySelectorAll('a[href*="sect"]');
         narrativeLinks.forEach(link => {
             link.style.pointerEvents = 'none';
             link.style.opacity = '0.5';
         });
 
-        // 4. Gestion des événements
         document.getElementById('eat-meal').addEventListener('click', handleEatMeal);
         document.getElementById('skip-meal').addEventListener('click', handleSkipMeal);
     }
@@ -104,12 +134,22 @@ function checkForMealChoice()
     return hasMealChoice;
 }
 
+let wasmReady = false;
+
+Module.onRuntimeInitialized = () => {
+    wasmReady = true;
+};
+
 function handleEatMeal() 
 {
 	if (!playerPtr) {
     	console.error("playerPtr non initialisé!");
     	return;
-  	}
+  	} 
+    if (!wasmReady) {
+        console.warn("WebAssembly pas encore prêt !");
+        return;
+    }
   
   	Module._eat(playerPtr, 1);
     enableNarrativeLinks();
@@ -121,6 +161,10 @@ function handleSkipMeal()
     	console.error("playerPtr non initialisé!");
     	return;
   	}
+    if (!wasmReady) {
+        console.warn("WebAssembly pas encore prêt !");
+        return;
+    }
   
   	Module._eat(playerPtr, 0);
     enableNarrativeLinks();
