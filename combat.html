@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Création de personnage</title>
+    <title>Combat</title>
     <style>
         :root {
             --primary-color: #e89b00 ;
@@ -87,48 +87,6 @@
             background-color: var(--text-color);
         }
 
-        #playerName {
-            color: var(--fifth-color);
-            font-size: 16px;
-            margin-left: 20px;
-            padding: 3px 5px;
-            border-radius: 7px;
-        }
-
-        #weapon-choices, #discipline-choices {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            margin: 0 20px 2rem 20px ;
-        }
-
-        #discipline-choices a, #weapon-choices a {
-            margin: 5px 0;
-            color: var(--fifth-color);
-            text-decoration: none;
-            background-color: var(--primary-color);
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-size: 16px;
-            text-align: center;
-            transition: 0.5s ease;
-            box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #discipline-choices a:hover, #weapon-choices a:hover {
-            background-color: var(--third-color);
-            transform: scale(1.05);
-        }
-
-        #discipline-choices a.disabled {
-            pointer-events: none;
-            background-color: var(--third-color);
-            opacity: 0.5;
-        }
-
         button {
             padding: 11px 20px;
             background-color: var(--primary-color);
@@ -162,34 +120,55 @@
         </div>
     </header>
     <div class="container">
-            
-        <p>Character creation :</p>
-        <div id="game-output"></div>
 
-        <!-- Étape 1 : nom du joueur -->
-        <div id="step-name">
-            <label for="playerName">Player name :</label>
-            <input type="text" id="playerName" placeholder="Your name" />
-            <!-- <button onclick="createPlayer()">OK</button> -->
-            <button id="create-player-btn">OK</button>
-        </div>
+      <p>Fight section :</p>
+      <div id="game-output"></div>
+      
+      <div>
+        <input type="file" id="jsonFile" accept=".json" />
+        <button onclick="loadFromStorage()">Load</button>
+      </div>
 
-        <!-- Étape 2 : choix de l'arme -->
-        <div id="step-weapon" style="display: none;">
-            <p>Choose a weapon :</p>
-            <div id="weapon-choices"></div>
-        </div>
-
-        <!-- Étape 3 : choix des disciplines -->
-        <div id="step-disciplines" style="display: none;">
-            <p>Choose 6 disciplines :</p>
-            <div id="discipline-choices"></div>
-        </div>
-
-        <button id="next-step" style="display: none;">Start adventure</button>
+      <button id=" ">Redirect to</button>
     </div>
-    <footer class="footer"></footer>
 
-    <script type="module" src="player_creation.js"></script>
+
+
+    <footer class="footer"></footer>
+    
+    <script>
+        document.getElementById('jsonFile').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                try {
+                    const content = e.target.result;
+                    const jsonData = JSON.parse(content);
+                    localStorage.setItem("player_autosave", JSON.stringify(jsonData));
+                    document.getElementById('playerData').textContent = 
+                        "JSON sauvegardé dans localStorage avec succès :\n\n" + JSON.stringify(jsonData, null, 2);
+                } catch (error) {
+                    alert("Erreur lors de la lecture du fichier JSON : " + error.message);
+                }
+            };
+
+            reader.readAsText(file);
+        });
+
+        function loadFromStorage() {
+            const saved = localStorage.getItem("player_autosave");
+            if (saved) {
+                document.getElementById('playerData').textContent =
+                    "Données du joueur depuis localStorage :\n\n" + saved;
+            } else {
+                alert("Aucune donnée trouvée dans localStorage.");
+            }
+        }
+    </script>
+    <script type="module" src="./fight.js"></script>
+    <script type="module" src="./addons.js"></script>
 </body>
 </html>

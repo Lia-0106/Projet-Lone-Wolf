@@ -1,3 +1,27 @@
+import Game from './player_creation.js';
+
+export function enableNarrativeLinks() {
+    const narrativeLinks = document.querySelectorAll('a[href*="sect"]');
+    narrativeLinks.forEach(link => {
+        link.style.pointerEvents = 'auto';
+        link.style.opacity = '1';
+    });
+    document.getElementById('meal-interface').remove();
+}
+
+export function readJSON(namefile) {
+    let player = null;
+    let saveData = localStorage.getItem(namefile);
+    if (saveData) {
+        player = JSON.parse(saveData);    
+    }
+    return player;
+}
+
+function saveJSON(namefile, player) {
+    localStorage.setItem(namefile, JSON.stringify(player));
+}
+
 class Addons {
     static GOLD_MAX = 50;
     static RESOURCE_MAX = 8;
@@ -6,30 +30,35 @@ class Addons {
         player.bag.gold += amount;
         if (player.bag.gold > Addons.GOLD_MAX) {
             player.bag.gold = Addons.GOLD_MAX;
-            return "[Votre Or est au maximum !]";
+            return "[Gold limit reached !]";
         }
         return null;
     }
 
-    static eat(player) {
-        if (player.tabDiscipline[Game.Disciplines.HUNTING]) {
-            return "Pas besoin de manger";
-        } else if (player.bag.meals > 0) {
-            player.bag.meals--;
-            return null;
+    static eat(player, choice) {
+        if (player.disciplines[Game.Disciplines.HUNTING]) {
+            return "[No need to eat, you have the Hunter discipline !]";
+        } 
+        if (choice == true) {
+            if (player.bag.meals > 0) {
+                player.bag.meals--;
+                saveJSON("player_autosave", player);
+                return "[-1 Food]";
+            }
         } else {
             player.endurance -= 3;
-            return "Vous n'avez plus de nourriture ! -3 Endurance";
+            saveJSON("player_autosave", player);
+            return "[-3 Endurance]";
         }
     }
 
     static heal(player) {
         if (player.combat) {
-            return "Vous ne pouvez pas vous soigner pendant un combat !";
+            return "You can't heal during a fight !";
         }
         
         if (player.endurance === player.enduranceMax) {
-            return "Endurance déjà au maximum !";
+            return "Endurance is at maximum !";
         }
         
         if (player.bag.potionsHealing > 0) {
@@ -37,12 +66,148 @@ class Addons {
             player.endurance = Math.min(player.endurance + 4, player.enduranceMax);
             
             if (player.endurance === player.enduranceMax) {
-                return "Endurance au maximum !";
+                return "Endurance is at maximum !";
             }
             return null;
         }
-        return "Pas assez de Potions !";
+        return "Not enough Potions !";
     }
 }
 
 export default Addons;
+
+export function importPlayer() {
+    return new Promise((resolve, reject) => {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = '.json';
+        fileInput.style.display = 'none';
+        document.body.appendChild(fileInput);
+
+        fileInput.onchange = (event) => {
+            const file = event.target.files[0];
+            if (!file) {
+                reject("Aucun fichier sélectionné");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const player = JSON.parse(e.target.result);
+                    saveJSON("player_autosave", player);
+                    resolve(player);
+                } catch (error) {
+                    reject("Erreur de parsing JSON");
+                }
+                document.body.removeChild(fileInput);
+            };
+            reader.onerror = () => {
+                reject("Erreur de lecture");
+                document.body.removeChild(fileInput);
+            };
+            reader.readAsText(file);
+        };
+
+        setTimeout(() => fileInput.click(), 0);
+    });
+}
+
+function checkForMealChoice() {
+    const paragraphs = document.querySelectorAll('p');
+    let hasMealChoice = false;
+    let mealParagraph = null;
+
+    // Recherche du paragraphe contenant le choix de repas
+    paragraphs.forEach(p => {
+        const text = p.textContent.toLowerCase();
+        if (text.includes('eat') && text.includes('meal') && text.includes('endurance')) {
+            hasMealChoice = true;
+            mealParagraph = p;
+        }
+    });
+
+    if (hasMealChoice && mealParagraph) {
+        // Création de l'interface de repas
+        const mealInterface = document.createElement('div');
+        mealInterface.id = 'meal-interface';
+        mealInterface.innerHTML = `
+            <button id="eat-meal">EAT</button>
+            <button id="skip-meal">SKIP</button>
+            <input type="file" id="player-import" accept=".json" style="display: none;">
+        `;
+
+        // Insertion de l'interface dans le DOM
+        const parent = mealParagraph.parentElement;
+        if (parent) {
+            let nextSibling = mealParagraph.nextElementSibling;
+            let inserted = false;
+            
+            // Recherche du prochain lien narratif pour positionnement
+            while (nextSibling && !inserted) {
+                if (nextSibling.querySelector('a[href*="sect"]')) {
+                    parent.insertBefore(mealInterface, nextSibling);
+                    inserted = true;
+                }
+                nextSibling = nextSibling.nextElementSibling;
+            }
+            
+            // Insertion à la fin si aucun lien trouvé
+            if (!inserted) {
+                parent.appendChild(mealInterface);
+            }
+        }
+
+        // Désactivation des liens narratifs
+        const narrativeLinks = document.querySelectorAll('a[href*="sect"]');
+        narrativeLinks.forEach(link => {
+            link.style.pointerEvents = 'none';
+            link.style.opacity = '0.5';
+        });
+
+        // Ajout des écouteurs d'événements avec vérification
+        setTimeout(() => {
+            const eatBtn = document.getElementById('eat-meal');
+            const skipBtn = document.getElementById('skip-meal');
+            
+            if (eatBtn) eatBtn.addEventListener('click', handleEatMeal);
+            if (skipBtn) skipBtn.addEventListener('click', handleSkipMeal);
+        }, 100);
+    }
+
+    return hasMealChoice;
+}
+
+async function handleEatMeal() {
+    // let player = readJSON("player_autosave") || await importPlayer();
+    let player = readJSON("player_autosave");
+    if (!player) {
+        try {
+            player = await importPlayer();
+        } catch (error) {
+            console.error("Import failed", error);
+            return;
+        }
+    }
+  	Addons.eat(player, true);
+    enableNarrativeLinks();
+}
+
+async function handleSkipMeal() {
+    // let player = readJSON("player_autosave") || await importPlayer();
+    let player = readJSON("player_autosave");
+    if (!player) {
+        try {
+            player = await importPlayer();
+        } catch (error) {
+            console.error("Import failed", error);
+            return;
+        }
+    }
+  	Addons.eat(player, false);
+    enableNarrativeLinks();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    checkForMealChoice() ;
+});

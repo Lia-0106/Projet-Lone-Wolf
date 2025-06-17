@@ -1,4 +1,4 @@
-import Addons from 'addons.js';
+import { updateDisplay } from './player_creation.js';
 
 class Fight {
     static combatTable = [
@@ -79,26 +79,94 @@ class Fight {
         return Math.max(-11, Math.min(11, rc));
     }
 
-    static combat(enemy) {
-        let saveData = localStorage.getItem("playerSave_autosave");
+    // function checkForMealChoice() {
+    //     const paragraphs = document.querySelectorAll('pspan');
+    //     let hasMealChoice = false;
+    //     let mealParagraph = null;
+
+    //     paragraphs.forEach(p => {
+    //     const text = p.textContent.toLowerCase();
+    //             if (text.includes('eat') && text.includes('meal') && text.includes('endurance')) {
+    //                 hasMealChoice = true;
+    //                 mealParagraph = span;
+    //             }
+    //         }
+    //     return hasMealChoice;
+    // }
+
+    static page_combat() {
+        const paragraphs = document.querySelectorAll('p');
+        let hasCombat = false;
+        paragraphs.forEach(p => {
+            if (p.classList.contains("combat") ) {
+                hasCombat=true;
+            }
+        })
+        return hasCombat;
+    }
+
+    static enemyGenerator(name) {
+        const enemy = {
+            name: name,
+            endurance: 0,
+            combatSkill: 0,
+        };
+        return enemy;
+    }
+
+    static combat() {
+        let saveData = localStorage.getItem("player_autosave");
 
         if (saveData) {
             // Parse en objet JS
             let player = JSON.parse(saveData);
-
-            const rc = Fight.calculeRc(player.combatSkill, enemy.combatSkill);
         
-            while (player.endurance > 0 && enemy.endurance > 0) {
-                const nbr = Fight.generateRnt();
-                const damages = Fight.calculePoint(rc, nbr);
-                
-                player.endurance -= damages.hero;
-                enemy.endurance -= damages.enemi;
-            }
 
+            if (this.page_combat()==true) {
+                let nbr_combat = document.querySelectorAll("span.enemy").length;
+                for (let i = 0; i < nbr_combat; i++) {
+                    let enemy = this.infot(i);
+                    if (!enemy) continue;
+
+                    const rc = this.calculeRc(player.combatSkill, enemy.combatSkill);
+                    
+                    while (player.endurance > 0 && enemy.endurance > 0) {
+                        const nbr = this.generateRnt();
+                        const damages = this.calculePoint(rc, nbr);
+                            
+                        player.endurance -= damages.hero;
+                        enemy.endurance -= damages.enemi;
+                    }
+                    let msg = `${enemy.name} a été vaincu. Endurance du héros : ${player.endurance}`;
+                    updateDisplay(msg);
+                    // console.log(`${enemy.name} a été vaincu. Endurance du héros : ${player.endurance}`);
+                }
+                
+            }
+            
             // Ré-enregistrer dans localStorage
-            localStorage.setItem("playerSave_autosave", JSON.stringify(player));
+            localStorage.setItem("player_autosave", JSON.stringify(player));
 
         }
+    }
+
+    static infot(i) {
+    const enemies = document.querySelectorAll('span.enemy');
+    const skills = document.querySelectorAll('span.combatskill');
+    const lives = document.querySelectorAll('span.endurance');
+
+    if (enemies[i] && skills[i] && lives[i]) {
+        const name = enemies[i].textContent.trim();
+        const skill = parseInt(skills[i].textContent.trim(), 10);
+        const endurance = parseInt(lives[i].textContent.trim(), 10);
+
+        const enemy = this.enemyGenerator(name);
+        enemy.combatSkill = skill;
+        enemy.endurance = endurance;
+
+        return enemy;
+    }
+
+    return null; // Aucun ennemi valide trouvé
     }
 }

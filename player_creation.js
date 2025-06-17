@@ -7,7 +7,7 @@ const MAX_DISCIPLINES = 6;
 
 // ==== FONCTIONS UTILES ====
 
-function updateDisplay(message) {
+export function updateDisplay(message) {
     const output = document.getElementById("game-output");
     output.innerText += message + "\n";
     output.scrollTop = output.scrollHeight;
@@ -15,7 +15,10 @@ function updateDisplay(message) {
 
 function showStep(stepId) {
     ["step-name", "step-weapon", "step-disciplines"].forEach(id => {
-        document.getElementById(id).style.display = (id === stepId) ? "block" : "none";
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.display = (id === stepId) ? "block" : "none";
+        }
     });
 }
 
@@ -32,9 +35,21 @@ function showSectionLoaded() {
 // -------------------------------------------------------------------
 
 // ==== INITIALISATION ====
+// document.addEventListener("DOMContentLoaded", function() {
+//     document.getElementById("create-player-btn").addEventListener("click", createPlayer);
+//     showStep("step-name");
+//     document.getElementById("next-step").addEventListener("click", nextStep);
+// });
 document.addEventListener("DOMContentLoaded", function() {
-    showStep("step-name");
-    document.getElementById("next-step").addEventListener("click", nextStep);
+    if (document.getElementById("step-name")) {
+        const createBtn = document.getElementById("create-player-btn");
+        if (createBtn) createBtn.addEventListener("click", createPlayer);
+        
+        const nextBtn = document.getElementById("next-step");
+        if (nextBtn) nextBtn.addEventListener("click", nextStep);
+        
+        showStep("step-name");
+    }
 });
 
 // -------------------------------------------------------------------
@@ -79,20 +94,17 @@ class Game {
         DOCUMENTS: 6
     };
 
-// -------------------------------------------------------------------
-
     static generateRnt() { return Math.floor(Math.random() * 10); }
 
-// -------------------------------------------------------------------
     static playerGenerator(name) {
         const player = {
             name: name,
             endurance: Game.generateRnt() + 20,
             enduranceMax: 0,
             combatSkill: Game.generateRnt() + 10,
-            tabDiscipline: new Array(10).fill(false),
+            disciplines: new Array(10).fill(false),
             nbrDiscipline: 0,
-            tabWeapon: new Array(10).fill(false),
+            weapons: new Array(10).fill(false),
             nbrWeapon: 0,
             weaponskillWeapon: -1,
             bag: {
@@ -111,8 +123,8 @@ class Game {
     static chooseWeapon(player, weaponIndex) {
         if (player.nbrWeapon >= Game.WEAPON_MAX) return false;
         
-        if (weaponIndex >= 0 && weaponIndex < 10 && !player.tabWeapon[weaponIndex]) {
-            player.tabWeapon[weaponIndex] = true;
+        if (weaponIndex >= 0 && weaponIndex < 10 && !player.weapons[weaponIndex]) {
+            player.weapons[weaponIndex] = true;
             player.nbrWeapon++;
             return true;
         }
@@ -122,8 +134,8 @@ class Game {
     static chooseDiscipline(player, disciplineIndex) {
         if (player.nbrDiscipline >= 6) return false;
         
-        if (disciplineIndex >= 0 && disciplineIndex < 10 && !player.tabDiscipline[disciplineIndex]) {
-            player.tabDiscipline[disciplineIndex] = true;
+        if (disciplineIndex >= 0 && disciplineIndex < 10 && !player.disciplines[disciplineIndex]) {
+            player.disciplines[disciplineIndex] = true;
             player.nbrDiscipline++;
             
             if (disciplineIndex === Game.Disciplines.WEAPONSKILL) {
@@ -133,9 +145,9 @@ class Game {
                     "Warhammer", "Sword", "Axe", "Quarterstaff",
                     "Broadsword", "Bow"
                 ];
-                updateDisplay(`[Le Bonus s'appliquera à l'arme : ${weaponNames[player.weaponskillWeapon]}]`);
-                if (player.tabWeapon[player.weaponskillWeapon]) {
-                    updateDisplay("[Arme Possédée, +2 en habileté en combat si équipée]");
+                updateDisplay(`[The bonus will apply to the weapon : ${weaponNames[player.weaponskillWeapon]}]`);
+                if (player.weapons[player.weaponskillWeapon]) {
+                    updateDisplay("[Owned Weapon, +2 Combat Skill if equipped]");
                 }
             }
             return true;
@@ -143,25 +155,23 @@ class Game {
         return false;
     }
 
-// -------------------------------------------------------------------
-
     static savePlayer(player, saveName = "autosave") {
         const saveData = {
             name: player.name,
             endurance: player.endurance,
             enduranceMax: player.enduranceMax,
             combatSkill: player.combatSkill,
-            disciplines: player.tabDiscipline,
-            weapons: player.tabWeapon,
+            disciplines: player.disciplines,
+            weapons: player.weapons,
             weaponskillWeapon: player.weaponskillWeapon,
             bag: player.bag
         };
 
         // Sauvegarde dans localStorage
-        localStorage.setItem(`playerSave_${saveName}`, JSON.stringify(saveData));
+        localStorage.setItem(`player_${saveName}`, JSON.stringify(saveData));
         
         // Sauvegarde dans un fichier (pour démonstration)
-        this.saveToFile(saveData, "ressources/player.json");
+        this.saveToFile(saveData, "player_autosave.json");
         
         return saveData;
     }
@@ -191,6 +201,8 @@ class Game {
     }
 }
 
+export default Game;
+
 // -------------------------------------------------------------------
 
 // ==== FONCTIONS DE CREATION DE PERSONNAGE ====
@@ -199,13 +211,13 @@ function createPlayer() {
     const name = input.value.trim();
 
     if (!name) {
-        updateDisplay("Entrez un nom de joueur valide");
+        updateDisplay("Enter a valid player name");
         return;
     }
 
     player = Game.playerGenerator(name);
-    updateDisplay(`Joueur créé : ${name}`);
-    updateDisplay("Choisissez votre arme ci-dessous.");
+    updateDisplay(`Player : ${name}`);
+    updateDisplay("Choose your weapon below.");
     showStep("step-weapon");
     renderWeaponChoices();
 }
@@ -224,7 +236,7 @@ function renderWeaponChoices() {
         link.innerText = `${weapon}`;
         link.onclick = () => {
             if (Game.chooseWeapon(player, i)) {
-                updateDisplay(`Arme choisie : ${weapon}`);
+                updateDisplay(`Weapon chosen : ${weapon}`);
                 
                 // Passer aux disciplines après avoir choisi 2 armes
                 if (player.nbrWeapon == 1) {
@@ -232,7 +244,7 @@ function renderWeaponChoices() {
                     renderDisciplineChoices();
                 }
             } else {
-                updateDisplay("Choix invalide ou déjà possédé !");
+                updateDisplay("Invalid choice or already owned !");
             }
         };
         container.appendChild(link);
@@ -253,19 +265,19 @@ function renderDisciplineChoices() {
         link.innerText = `${discipline}`;
         
         // Désactiver visuellement les disciplines déjà choisies
-        if (player.tabDiscipline[i]) {
+        if (player.disciplines[i]) {
             link.classList.add("disabled");
         }
 
         link.onclick = () => {
             // Vérifier si on peut encore choisir des disciplines
             if (disciplinesChosen >= MAX_DISCIPLINES) {
-                updateDisplay("Vous avez déjà choisi 6 disciplines !");
+                updateDisplay("You have already chosen 6 disciplines !");
                 return;
             }
             
             if (Game.chooseDiscipline(player, i)) {
-                updateDisplay(`Discipline choisie : ${discipline}`);
+                updateDisplay(`Discipline chosen : ${discipline}`);
                 link.classList.add("disabled");
                 link.onclick = null;
                 disciplinesChosen++;
@@ -273,10 +285,10 @@ function renderDisciplineChoices() {
                 // Activer le bouton suivant après 6 disciplines
                 if (disciplinesChosen >= MAX_DISCIPLINES) {
                     document.getElementById("next-step").style.display = "inline-block";
-                    updateDisplay("Choix terminé. Prêt à débuter l'aventure !");
+                    updateDisplay("Selection complete. Ready to start the adventure !");
                 }
             } else {
-                updateDisplay("Choix invalide ou déjà possédé !");
+                updateDisplay("Invalid choice or already owned !");
             }
         };
         container.appendChild(link);
@@ -287,14 +299,14 @@ function nextStep() {
     if (player) {
         // Sauvegarder le joueur avant de continuer
         Game.savePlayer(player, "current");
-        updateDisplay("L'aventure commence ! Redirection en cours...");
+        updateDisplay("The adventure begins ! Redirecting...");
         
         // Redirection vers la page de l'aventure
         setTimeout(() => {
             window.location.href = "./export/sect1.html";
         }, 1500);
     } else {
-        updateDisplay("Veuillez d'abord créer votre personnage");
+        updateDisplay("Please create your character first");
     }
 }
 
