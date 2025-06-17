@@ -263,7 +263,8 @@ async function handleEatMeal() {
         localStorage.setItem("player_autosave", JSON.stringify(player));
 
         // Proposer téléchargement du fichier modifié
-        saveToFile(player, "player_autosave_modified.json");
+        // saveToFile(player, "player_autosave_modified.json");
+        updateServerWithPlayerData(player);
 
         refreshPlayerData();
         enableNarrativeLinks();
@@ -303,7 +304,10 @@ async function updateServerWithPlayerData(player) {
     const response = await fetch('http://localhost:3000/update', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(player)
+      body: JSON.stringify({
+        ...player,
+        filename: "C:\\Users\\matth\\Downloads\\player_autosave.json"
+      })
     });
     const result = await response.json();
     if (response.ok) {
