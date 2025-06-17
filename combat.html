@@ -87,13 +87,21 @@
             background-color: var(--text-color);
         }
 
+        .load {
+          font-size: 16px;
+          margin: 2rem 0;
+          background-color: #333;
+          padding: 1rem 2rem 2rem 2rem;
+          border-radius: 10px;
+        }
+
         button {
             padding: 11px 20px;
             background-color: var(--primary-color);
             color: var(--fifth-color);
             cursor: pointer;
             border-radius: 15px;
-            margin-left: 20px;
+            margin-left: 5px;
             border: none;
             font-weight: 600;
             transition: 0.5s ease;
@@ -121,17 +129,18 @@
     </header>
     <div class="container">
 
-      <p>Fight section :</p>
-      <div id="game-output"></div>
-      
+      <p>FIGHT SECTION</p>
+
       <div class="load">
+        <p>Load your file :</p>
         <input type="file" id="jsonFile" accept=".json" />
         <button onclick="loadFromStorage()">Load</button>
       </div>
 
+      <div id="game-output"></div>
+      
       <button id=" ">Redirect to</button>
     </div>
-
 
 
     <footer class="footer"></footer>
@@ -148,8 +157,6 @@
                     const content = e.target.result;
                     const jsonData = JSON.parse(content);
                     localStorage.setItem("player_autosave", JSON.stringify(jsonData));
-                    document.getElementById('playerData').textContent = 
-                        "JSON sauvegardé dans localStorage avec succès :\n\n" + JSON.stringify(jsonData, null, 2);
                 } catch (error) {
                     alert("Erreur lors de la lecture du fichier JSON : " + error.message);
                 }
@@ -160,12 +167,10 @@
 
         function loadFromStorage() {
             const saved = localStorage.getItem("player_autosave");
-            if (saved) {
-                document.getElementById('playerData').textContent =
-                    "Données du joueur depuis localStorage :\n\n" + saved;
-            } else {
+            if (!saved) {
                 alert("Aucune donnée trouvée dans localStorage.");
-            }
+                return;
+            };
         }
     </script>
     <script type="module" src="./fight.js"></script>

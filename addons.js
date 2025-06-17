@@ -18,8 +18,22 @@ export function readJSON(namefile) {
     return player;
 }
 
+// function saveToFile(data, filename) {
+//     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+//     const url = URL.createObjectURL(blob);
+//     const a = document.createElement('a');
+//     a.href = url;
+//     a.download = filename;
+//     document.body.appendChild(a);
+//     a.click();
+//     document.body.removeChild(a);
+//     URL.revokeObjectURL(url);
+// }
+
+
 function saveJSON(namefile, player) {
     localStorage.setItem(namefile, JSON.stringify(player));
+    Game.saveToFile(player, "player_autosave.json");
 }
 
 class Addons {
@@ -77,40 +91,50 @@ class Addons {
 export default Addons;
 
 export function importPlayer() {
-    return new Promise((resolve, reject) => {
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = '.json';
-        fileInput.style.display = 'none';
-        document.body.appendChild(fileInput);
+    // return new Promise((resolve, reject) => {
+    //     const fileInput = document.createElement('input');
+    //     fileInput.type = 'file';
+    //     fileInput.accept = '.json';
+    //     fileInput.style.display = 'none';
+    //     document.body.appendChild(fileInput);
 
-        fileInput.onchange = (event) => {
-            const file = event.target.files[0];
-            if (!file) {
-                reject("Aucun fichier sélectionné");
-                return;
-            }
+    //     fileInput.onchange = (event) => {
+    //         const file = event.target.files[0];
+    //         if (!file) {
+    //             reject("Aucun fichier sélectionné");
+    //             return;
+    //         }
 
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const player = JSON.parse(e.target.result);
-                    saveJSON("player_autosave", player);
-                    resolve(player);
-                } catch (error) {
-                    reject("Erreur de parsing JSON");
-                }
-                document.body.removeChild(fileInput);
-            };
-            reader.onerror = () => {
-                reject("Erreur de lecture");
-                document.body.removeChild(fileInput);
-            };
-            reader.readAsText(file);
-        };
+    //         const reader = new FileReader();
+    //         reader.onload = (e) => {
+    //             try {
+    //                 const player = JSON.parse(e.target.result);
+    //                 saveJSON("player_autosave", player);
+    //                 resolve(player);
+    //             } catch (error) {
+    //                 reject("Erreur de parsing JSON");
+    //             }
+    //             document.body.removeChild(fileInput);
+    //         };
+    //         reader.onerror = () => {
+    //             reject("Erreur de lecture");
+    //             document.body.removeChild(fileInput);
+    //         };
+    //         reader.readAsText(file);
+    //     };
 
-        setTimeout(() => fileInput.click(), 0);
-    });
+    //     fileInput.click();
+    // });
+
+    const elements = document.querySelectorAll('[class^="sect"]');
+    const newinput = document.createElement('input');
+    const newbutton = document.createElement('button');
+
+    newinput.id = 'jsonFile';
+    newinput.type = '.json';
+    newinput.setAttribute('.json');
+
+    newbutton.
 }
 
 function checkForMealChoice() {
@@ -179,33 +203,29 @@ function checkForMealChoice() {
 }
 
 async function handleEatMeal() {
-    // let player = readJSON("player_autosave") || await importPlayer();
-    let player = readJSON("player_autosave");
-    if (!player) {
-        try {
+    try {
+        let player = readJSON("player_autosave");
+        if (!player) {
             player = await importPlayer();
-        } catch (error) {
-            console.error("Import failed", error);
-            return;
         }
+        Addons.eat(player, true);
+        enableNarrativeLinks();
+    } catch (error) {
+        console.error("Meal error:", error);
     }
-  	Addons.eat(player, true);
-    enableNarrativeLinks();
 }
 
 async function handleSkipMeal() {
-    // let player = readJSON("player_autosave") || await importPlayer();
-    let player = readJSON("player_autosave");
-    if (!player) {
-        try {
+    try {
+        let player = readJSON("player_autosave");
+        if (!player) {
             player = await importPlayer();
-        } catch (error) {
-            console.error("Import failed", error);
-            return;
         }
+        Addons.eat(player, false);
+        enableNarrativeLinks();
+    } catch (error) {
+        console.error("Meal error:", error);
     }
-  	Addons.eat(player, false);
-    enableNarrativeLinks();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
