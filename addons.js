@@ -18,17 +18,17 @@ export function readJSON(namefile) {
     return player;
 }
 
-// function saveToFile(data, filename) {
-//     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-//     const url = URL.createObjectURL(blob);
-//     const a = document.createElement('a');
-//     a.href = url;
-//     a.download = filename;
-//     document.body.appendChild(a);
-//     a.click();
-//     document.body.removeChild(a);
-//     URL.revokeObjectURL(url);
-// }
+function saveToFile(data, filename) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
 
 
 function saveJSON(namefile, player) {
@@ -73,8 +73,8 @@ class Addons {
             message = "[-3 Endurance]";
         }
 
-        localStorage.setItem("player_autosave", JSON.stringify(player));
-        console.log("Sauvegarde localStorage :", localStorage.getItem("player_autosave"));
+        // localStorage.setItem("player_autosave", JSON.stringify(player));
+        // console.log("Sauvegarde localStorage :", localStorage.getItem("player_autosave"));
         return message;
         
         // if (player?.disciplines?.[Game.Disciplines.HUNTING]) {
@@ -178,6 +178,13 @@ function loadFromStorage() {
 }
 
 function checkForMealChoice() {
+    
+    // ✅ Ne rien faire si l'interface existe déjà
+    if (document.getElementById('meal-interface')) {
+        return false;
+    }
+
+    
     const paragraphs = document.querySelectorAll('p');
     let hasMealChoice = false;
     let mealParagraph = null;
@@ -243,23 +250,26 @@ function checkForMealChoice() {
 }
 
 async function handleEatMeal() {
-    try {
+     try {
         let player = readJSON("player_autosave");
         if (!player) {
             player = await importPlayer();
         }
+
         const result = Addons.eat(player, true);
         console.log(result);
 
-        // Recharge l'objet joueur après modification
-        player = readJSON("player_autosave");
-        console.log("Vérification joueur modifié :", player);
+        // Sauvegarde en mémoire
+        localStorage.setItem("player_autosave", JSON.stringify(player));
 
+        // Proposer téléchargement du fichier modifié
+        saveToFile(player, "player_autosave_modified.json");
+
+        refreshPlayerData();
         enableNarrativeLinks();
     } catch (error) {
         console.error("Meal error:", error);
     }
-
 }
 
 async function handleSkipMeal() {
@@ -268,17 +278,24 @@ async function handleSkipMeal() {
         if (!player) {
             player = await importPlayer();
         }
-        Addons.eat(player,false);
 
-        // Recharge l'objet joueur après modification
-        player = readJSON("player_autosave");
-        console.log("Vérification joueur modifié :", player);
+        Addons.eat(player, false);
 
+        // Sauvegarde directement après la modification
+        localStorage.setItem("player_autosave", JSON.stringify(player));
+
+        refreshPlayerData();
         enableNarrativeLinks();
     } catch (error) {
         console.error("Meal error:", error);
     }
 
+}
+
+function refreshPlayerData() {
+    const player = readJSON("player_autosave");
+    console.log("Joueur actuel :", player);
+    // Mettez à jour l'affichage ici, si vous avez des champs visibles (points d'endurance, or, etc.)
 }
 
 document.addEventListener("DOMContentLoaded", () => {
