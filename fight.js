@@ -66,10 +66,11 @@ class Fight {
 // ==== FONCTIONS DE COMBAT ====
 
     static calculePoint(rc, nbrRand) {
+        // Cherche rc et nbrRand dans combatTable
         const entry = Fight.combatTable.find(
             ([tabRc, tabRand]) => tabRc === rc && tabRand === nbrRand
         );
-        return entry ? { hero: entry[2], enemi: entry[3] } : { hero: 0, enemi: 0 };
+        return entry ? { hero: entry[3], enemi: entry[2] } : { hero: 0, enemi: 0 };
     }
 
     static calculeRc(habHero, habEnemi) {
@@ -77,43 +78,23 @@ class Fight {
         return Math.max(-11, Math.min(11, rc));
     }
 
-    static page_combat() {
-        const paragraphs = document.querySelectorAll('p');
-        let hasCombat = false;
-        paragraphs.forEach(p => {
-            if (p.classList.contains("combat") ) {
-                hasCombat = true;
-            }
-        })
-        return hasCombat;
-    }
-
-    static enemyGenerator(name) {
-        const enemy = {
-            name: name,
-            endurance: 0,
-            combatSkill: 0,
-        };
-        return enemy;
-    }
-
     static prepareCombat() {
+        const hasCombat = document.querySelector('p.combat');
+        if (!hasCombat) return;
+
         const combatLinks = document.querySelectorAll('a');
         combatLinks.forEach(link => {
-            // Ajoute une détection si la page contient un combat
-            const hasCombat = document.querySelector('p.combat');
+            // Detecte balise avec lien href
             const parentText = link.parentElement.textContent.toLowerCase();
-            if (
-                parentText.includes('kill') ||
-                parentText.includes('combat') ||
-                parentText.includes('endurance') ||
-                hasCombat // Ajout : si la page contient un combat, TOUS les liens sont valides
-            ) {
+            const isEvade = parentText.includes('evade') || parentText.includes('flee') || parentText.includes('run');
+            
+            // Redirige vers combat.html si pas lien évasion
+            if (!isEvade) {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     localStorage.setItem('combatNextPage', link.href);
 
-                    // Stocker les informations sur les ennemis
+                    // Stock informations sur ennemis
                     const enemies = [];
                     const combatElements = document.querySelectorAll('p.combat');
                     combatElements.forEach(p => {
@@ -130,25 +111,6 @@ class Fight {
                 });
             }
         });
-    }
-    static infot(i) {
-        const enemies = document.querySelectorAll('span.enemy');
-        const skills = document.querySelectorAll('span.combatskill');
-        const lives = document.querySelectorAll('span.endurance');
-
-        if (enemies[i] && skills[i] && lives[i]) {
-            const name = enemies[i].textContent.trim();
-            const skill = parseInt(skills[i].textContent.trim(), 10);
-            const endurance = parseInt(lives[i].textContent.trim(), 10);
-
-            const enemy = this.enemyGenerator(name);
-            enemy.combatSkill = skill;
-            enemy.endurance = endurance;
-
-            return enemy;
-        }
-
-        return null;
     }
 }
 

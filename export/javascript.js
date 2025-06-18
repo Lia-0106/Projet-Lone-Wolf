@@ -34,8 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
     section.appendChild(container);
 
     document.querySelectorAll("p.combat").forEach(p => {
-        const cs = p.querySelector(".combatskill");
-        const endu = p.querySelector(".endurance");
+        let cs = p.querySelector(".combatskill");
+        let endu = p.querySelector(".endurance");
 
         if (cs) cs.textContent = "Combat Skill : " + cs.textContent;
         if (endu) endu.textContent = "Endurance : " + endu.textContent;
@@ -53,10 +53,10 @@ document.addEventListener("DOMContentLoaded", () => {
         div.appendChild(signpost);
     }
 
-    let randomLink = document.getElementById("random");
-    if (randomLink) {
-        randomLink.style.cursor = "pointer";
-        randomLink.addEventListener("click", (e) => {
+    let random = document.getElementById("random");
+    if (random) {
+        random.style.cursor = "pointer";
+        random.addEventListener("click", (e) => {
             e.preventDefault();
             randomNumberTable();
         });
@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+//Fonction qui permet de créer un header
 function createHeader() {
     let header = document.createElement("header");
 
@@ -83,7 +84,7 @@ function createHeader() {
     return header;
 }
 
-
+//Fonction qui permet de déplacer les notes de bas de page dans le footer
 function moveFooter(section) {
     let footer = document.createElement("footer") ;
     footer.classList.add("footer");
@@ -106,6 +107,7 @@ function moveFooter(section) {
     return footer ;
 }
 
+//Fonction qui permet de supprimer les paragraphes vides
 function removeEmptyParagraphs() {
     document.querySelectorAll('p').forEach(p => {
         if (!p.textContent.trim()) {
@@ -114,6 +116,7 @@ function removeEmptyParagraphs() {
     });
 }
 
+//Fonction qui permet de récupérer les images et d'afficher uniquement celle en format png
 function printPictures() {
 	  let baseURL = "https://www.projectaon.org/en/xhtml/lw/02fotw/" ;
 	  let illustrations = document.querySelectorAll("div.float, div.inline") ;
@@ -122,7 +125,6 @@ function printPictures() {
 		    let pictures = Array.from(div.getElementsByTagName("img")) ;
 		    let png = pictures.find(img => img.src.endsWith(".png")) ;
 
-		    // On vide la div pour ne garder que l'image
 		    div.innerHTML = "" ;
 		    if (png) {
 		        png.src = baseURL + png.getAttribute("src") ;
@@ -131,6 +133,7 @@ function printPictures() {
 	  }) ;
 } 
 
+//Fonction qui permet de créer une random table number 
 function randomNumberTable() {
     let bubble = document.createElement("div");
     bubble.id = "random-bubble";

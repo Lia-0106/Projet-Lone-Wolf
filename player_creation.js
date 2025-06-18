@@ -1,4 +1,3 @@
-// ==== FONCTIONS D'INTERFACE UTILISATEUR ====
 let player = null;
 let disciplinesChosen = 0;
 const MAX_DISCIPLINES = 6;
@@ -22,24 +21,8 @@ function showStep(stepId) {
     });
 }
 
-function showSectionLoaded() {
-    ["step-name", "step-weapon", "step-disciplines", "next-step"].forEach(id => {
-        const el = document.getElementById(id);
-        if(el) el.style.display = "none";
-    });
-    
-    const gameContent = document.getElementById("game-content");
-    if(gameContent) gameContent.style.display = "block";
-}
-
 // -------------------------------------------------------------------
 
-// ==== INITIALISATION ====
-// document.addEventListener("DOMContentLoaded", function() {
-//     document.getElementById("create-player-btn").addEventListener("click", createPlayer);
-//     showStep("step-name");
-//     document.getElementById("next-step").addEventListener("click", nextStep);
-// });
 document.addEventListener("DOMContentLoaded", function() {
     if (document.getElementById("step-name")) {
         const createBtn = document.getElementById("create-player-btn");
@@ -54,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // -------------------------------------------------------------------
 
-// ==== CLASSE GAME ====
+// ==== CLASS GAME ====
 class Game {
     static WEAPON_MAX = 2;
 
@@ -170,7 +153,6 @@ class Game {
         // Sauvegarde dans localStorage
         localStorage.setItem(`player_${saveName}`, JSON.stringify(saveData));
         
-        // Sauvegarde dans un fichier (pour démonstration)
         this.saveToFile(saveData, "player_autosave.json");
         
         return saveData;
@@ -178,13 +160,17 @@ class Game {
 
     static saveToFile(data, filename) {
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
+        const url = URL.createObjectURL(blob);// URL temporaire Blob
+
         const a = document.createElement('a');
         a.href = url;
         a.download = filename;
+
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+
+        // Libère l'URL temporaire
         URL.revokeObjectURL(url);
     }
 

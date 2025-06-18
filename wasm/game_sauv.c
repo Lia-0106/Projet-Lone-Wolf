@@ -193,8 +193,8 @@ int calcule_rc(int hab_hero, int hab_enemi)
 
 void combat(Player * p1, Player * p2)
 {
-    int rc, nbr, j1, j2; // j1 → degat subit pour p1 
-    rc = calcule_rc(p1->combat_skill, p2->combat_skill); //les Habilités
+    int rc, nbr, j1, j2;
+    rc = calcule_rc(p1->combat_skill, p2->combat_skill);
     while (p1->endurance > 0 && p2->endurance > 0) {
         nbr = generate_rnt();
         calcule_point(rc, nbr, &j1, &j2);

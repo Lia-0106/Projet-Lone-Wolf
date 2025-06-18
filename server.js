@@ -1,14 +1,12 @@
 const http = require('http');
 const fs = require('fs');
-const path = 'data.json';
 
 const server = http.createServer((req, res) => {
-    // Ajoute ces lignes pour autoriser CORS
+    // autorise requêtes externes
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-    // Répondre aux requêtes OPTIONS (pré-vol CORS)
     if (req.method === 'OPTIONS') {
         res.writeHead(204);
         res.end();
@@ -25,18 +23,17 @@ const server = http.createServer((req, res) => {
             const filename = newData.filename || 'data.json';
             delete newData.filename;
 
-            // Lire le fichier JSON existant
+            // Lire fichier JSON
             fs.readFile(filename, 'utf8', (err, data) => {
                 let jsonData = {};
                 if (!err && data) {
                     try {
                         jsonData = JSON.parse(data);
                     } catch (e) {
-                        // fichier corrompu, on écrase
                         jsonData = {};
                     }
                 }
-                // Mettre à jour les données JSON avec les nouvelles valeurs
+                // Maj données JSON
                 jsonData = { ...jsonData, ...newData };
 
                 // Écrire le fichier JSON modifié

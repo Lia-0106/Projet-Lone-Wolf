@@ -1,0 +1,168 @@
+:root {
+    --primary-color: #e4a934 ;
+    --secondary-color: #282828 ;
+    --third-color: #8b8b8b ;
+    --fourth-color: #edcb88 ;
+    --fifth-color: #131313 ;
+    --text-color: #d7d7d7 ;
+}
+
+* {
+    font-family: 'Inter', 'sans-serif';
+    text-decoration: none ;
+    color: var(--text-color) ;
+}
+
+body {
+    background-color: var(--third-color);
+    margin: 0 auto;
+    padding: 15px;
+    width: 55%;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.content {
+    background-color: var(--secondary-color);
+    padding: 2rem;
+}
+
+/* HEADER */
+header {
+    background-color: var(--fifth-color);
+    padding: 1.5rem 0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+    position: relative;
+}
+
+header p {
+    font-family: 'Times New Roman', Times, serif;
+    text-align: center;
+    font-size: 36px;
+    font-weight: 800;
+    margin: 0;
+}
+
+header div {
+    transition: 0.8s ease;
+}
+
+header div:hover {
+    transform: scale(1.05);
+}
+
+header p:last-child {
+    font-style: italic;
+    margin-top: 0.8rem;
+}
+
+.container {
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+}
+
+.terminal-container {
+    height: 250px;
+    display: flex;
+    border-radius: 15px;
+    margin: 2rem 0 2rem ;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.terminal-bar {
+    width: 80px;
+    background-color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    border-bottom-left-radius: 15px;
+    border-top-left-radius: 15px;
+}
+
+.prompt {
+    color: var(--text-color);
+    font-size: 20px;
+}
+        
+#game-output {
+    scrollbar-width: none;
+    background-color: var(--fifth-color);
+    color: var(--third-color);
+    padding: 15px;
+    margin: 0 auto;
+    width: 100%;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    transition: 0.5s ease;
+    font-weight: 600;
+    border-bottom-right-radius: 15px;
+    border-top-right-radius: 15px;
+    overflow-y: auto;
+    line-height: 1.4;
+}
+
+#game-output * {
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--third-color);
+}
+
+.load {
+    font-size: 16px;
+    margin: 2rem 0;
+    background-color: #333;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+button {
+    padding: 11px 20px;
+    background-color: var(--primary-color);
+    color: var(--fifth-color);
+    cursor: pointer;
+    border-radius: 17px;
+    margin-left: 5px;
+    border: none;
+    font-weight: 600;
+    transition: 0.5s ease;
+}
+        
+button:hover {
+    background-color: var(--third-color);
+    transform: scale(1.05);
+}
+
+.file-upload {
+    display: inline-block;
+    padding: 9px 35px;
+    background-color: var(--text-color);
+    color: var(--secondary-color);
+    cursor: pointer;
+    border-radius: 15px;
+    font-weight: 600;
+    transition: 0.5s ease;
+    font-size: 14px;
+}
+
+.file-upload:hover {
+    background-color: var(--third-color);
+    color: var(--fifth-color);
+}
+
+input[type="file"] {
+    display: none;
+}
+
+footer {
+    padding: 0.5rem 2rem;
+    background-color: var(--fifth-color);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
